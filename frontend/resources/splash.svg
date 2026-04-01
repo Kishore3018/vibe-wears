@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2732 2732" role="img" aria-label="Vibe Wears Splash">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0C0C10" />
+      <stop offset="100%" stop-color="#191922" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F4DFA4" />
+      <stop offset="100%" stop-color="#C9A962" />
+    </linearGradient>
+  </defs>
+  <rect width="2732" height="2732" fill="url(#bg)" />
+  <circle cx="1366" cy="1250" r="480" fill="#111" opacity="0.35" />
+  <path d="M900 820 L1160 820 L1366 1670 L1572 820 L1832 820 L1470 2030 L1262 2030 Z" fill="url(#gold)" />
+  <text x="1366" y="2230" text-anchor="middle" fill="#E6CF93" font-family="Montserrat, Arial, sans-serif" font-size="160" letter-spacing="28">VIBE WEARS</text>
+</svg>

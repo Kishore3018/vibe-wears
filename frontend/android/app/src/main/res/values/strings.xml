@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Vibe Wears Shopping</string>
+    <string name="title_activity_main">Vibe Wears Shopping</string>
+    <string name="package_name">com.vibewears.app</string>
+    <string name="custom_url_scheme">com.vibewears.app</string>
+</resources>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Vibe Wears Icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111111" />
+      <stop offset="100%" stop-color="#222222" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F0D48A" />
+      <stop offset="100%" stop-color="#C9A962" />
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="220" fill="url(#bg)" />
+  <path d="M270 250 L420 250 L512 620 L604 250 L754 250 L565 790 L459 790 Z" fill="url(#gold)" />
+  <rect x="250" y="860" width="524" height="34" rx="17" fill="#C9A962" opacity="0.85" />
+</svg>
