@@ -4,11 +4,21 @@ __pycache__/
 
 .vscode/
 
+# Secrets and local config
+backend/.env
+frontend/android/local.properties
+frontend/android/keystore.properties
+frontend/android/keystore/
+
+# Local runtime/build outputs
+backend/uploads/
+backend/*.db
+downloads/*.apk
+frontend/.angular/
+
 frontend/node_modules/
 frontend/android/.gradle/
 frontend/android/build/
 frontend/android/app/build/
 frontend/dist/
-
-backend/uploads/
 *.log
