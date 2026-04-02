@@ -56,6 +56,7 @@ export class PaymentService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiUrl}/payments`;
   private razorpayLoaded = false;
+  private readonly razorpayScriptSrc = 'https://checkout.razorpay.com/v1/checkout.js';
 
   /**
    * Load Razorpay checkout script dynamically
@@ -67,15 +68,59 @@ export class PaymentService {
         return;
       }
 
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.onload = () => {
-        this.razorpayLoaded = true;
-        resolve();
-      };
-      script.onerror = () => reject(new Error('Failed to load Razorpay script'));
-      document.body.appendChild(script);
+      const existingScript = document.querySelector(`script[src="${this.razorpayScriptSrc}"]`) as HTMLScriptElement | null;
+      if (existingScript) {
+        existingScript.addEventListener('load', () => {
+          this.razorpayLoaded = true;
+          resolve();
+        }, { once: true });
+        existingScript.addEventListener('error', () => {
+          existingScript.remove();
+          this.injectRazorpayScript(resolve, reject);
+        }, { once: true });
+
+        setTimeout(() => {
+          if (window.Razorpay) {
+            this.razorpayLoaded = true;
+            resolve();
+          }
+        }, 3000);
+        return;
+      }
+
+      this.injectRazorpayScript(resolve, reject);
     });
+  }
+
+  private injectRazorpayScript(resolve: () => void, reject: (reason?: unknown) => void): void {
+    const script = document.createElement('script');
+    script.src = this.razorpayScriptSrc;
+    script.async = true;
+    script.defer = true;
+    script.crossOrigin = 'anonymous';
+
+    const timeout = window.setTimeout(() => {
+      script.remove();
+      reject(new Error('Failed to load Razorpay script. Check internet or disable blockers.'));
+    }, 10000);
+
+    script.onload = () => {
+      window.clearTimeout(timeout);
+      if (!window.Razorpay) {
+        reject(new Error('Razorpay SDK loaded but window.Razorpay is unavailable'));
+        return;
+      }
+      this.razorpayLoaded = true;
+      resolve();
+    };
+
+    script.onerror = () => {
+      window.clearTimeout(timeout);
+      script.remove();
+      reject(new Error('Failed to load Razorpay script. Check internet or disable blockers.'));
+    };
+
+    document.body.appendChild(script);
   }
 
   /**

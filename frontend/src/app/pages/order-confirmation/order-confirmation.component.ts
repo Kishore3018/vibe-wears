@@ -239,8 +239,8 @@ import { OrderService, Order } from '@core/services/order.service';
     }
 
     .order-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
       margin-bottom: 2rem;
       text-align: left;
     }
@@ -250,13 +250,13 @@ import { OrderService, Order } from '@core/services/order.service';
       justify-content: space-between;
       align-items: center;
       padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid #e5e7eb;
 
       h2 {
         font-family: 'Cormorant Garamond', serif;
         font-size: 1.25rem;
         font-weight: 500;
-        color: var(--text-light);
+        color: #111111;
         margin: 0;
       }
     }
@@ -302,7 +302,7 @@ import { OrderService, Order } from '@core/services/order.service';
 
     .order-items {
       padding: 1rem 1.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .order-item {
@@ -312,7 +312,7 @@ import { OrderService, Order } from '@core/services/order.service';
       padding: 0.75rem 0;
 
       &:not(:last-child) {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid #f3f4f6;
       }
     }
 
@@ -323,18 +323,18 @@ import { OrderService, Order } from '@core/services/order.service';
     }
 
     .item-name {
-      color: var(--text-light);
+      color: #111111;
       font-weight: 500;
     }
 
     .item-variant,
     .item-qty {
       font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.5);
+      color: #111111;
     }
 
     .item-price {
-      color: var(--text-light);
+      color: #111111;
       font-weight: 500;
     }
 
@@ -346,7 +346,7 @@ import { OrderService, Order } from '@core/services/order.service';
       display: flex;
       justify-content: space-between;
       padding: 0.5rem 0;
-      color: rgba(255, 255, 255, 0.6);
+      color: #111111;
       font-size: 0.95rem;
 
       &.discount {
@@ -356,12 +356,12 @@ import { OrderService, Order } from '@core/services/order.service';
       &.final {
         padding-top: 1rem;
         margin-top: 0.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        color: var(--text-light);
+        border-top: 1px solid #e5e7eb;
+        color: #111111;
         font-size: 1.1rem;
 
         strong {
-          color: var(--accent-color);
+          color: #111111;
         }
       }
     }

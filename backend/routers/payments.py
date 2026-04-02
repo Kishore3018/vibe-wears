@@ -15,6 +15,7 @@ from typing import Optional
 from database.connection import get_db
 from models.models import User, Order, PaymentStatus, OrderStatus, Cart, CartItem, Product, ProductVariant
 from utils.auth import get_current_user
+from websocket.manager import manager
 
 # Initialize router
 router = APIRouter(prefix="/api/payments", tags=["Payments"])
@@ -78,6 +79,19 @@ class PaymentResponse(BaseModel):
 class PaymentFailureRequest(BaseModel):
     order_id: int
     reason: Optional[str] = None
+
+
+def _build_order_update_payload(order: Order, message: str) -> dict:
+    """Build a compact real-time payload consumed by checkout/order UI."""
+    return {
+        "order_id": order.id,
+        "order_number": order.order_number,
+        "status": order.status.value if hasattr(order.status, "value") else str(order.status),
+        "payment_status": order.payment_status.value if hasattr(order.payment_status, "value") else str(order.payment_status),
+        "payment_method": order.payment_method,
+        "message": message,
+        "updated_at": datetime.utcnow().isoformat()
+    }
 
 
 # ============== Endpoints ==============
@@ -175,6 +189,10 @@ async def verify_payment(
         order.payment_status = PaymentStatus.COMPLETED
         order.payment_id = request.razorpay_payment_id or f"pay_demo_{order.order_number}"
         db.commit()
+        await manager.notify_order_update(
+            current_user.id,
+            _build_order_update_payload(order, "Payment completed")
+        )
         
         return PaymentResponse(
             success=True,
@@ -216,6 +234,10 @@ async def verify_payment(
         order.payment_status = PaymentStatus.COMPLETED
         order.payment_id = request.razorpay_payment_id
         db.commit()
+        await manager.notify_order_update(
+            current_user.id,
+            _build_order_update_payload(order, "Payment completed")
+        )
         
         return PaymentResponse(
             success=True,
@@ -259,6 +281,10 @@ async def mark_payment_failed(
 
     # Idempotent behavior for retries
     if order.payment_status == PaymentStatus.FAILED and order.status == OrderStatus.CANCELLED:
+        await manager.notify_order_update(
+            current_user.id,
+            _build_order_update_payload(order, "Payment already marked as failed")
+        )
         return PaymentResponse(
             success=True,
             message="Payment already marked as failed",
@@ -322,6 +348,11 @@ async def mark_payment_failed(
 
     db.commit()
 
+    await manager.notify_order_update(
+        current_user.id,
+        _build_order_update_payload(order, "Payment failed")
+    )
+
     return PaymentResponse(
         success=True,
         message="Payment failed and order was rolled back. Cart restored for retry.",
@@ -352,6 +383,11 @@ async def mark_cod_payment(
     order.payment_method = "cash_on_delivery"
     order.payment_status = PaymentStatus.PENDING
     db.commit()
+
+    await manager.notify_order_update(
+        current_user.id,
+        _build_order_update_payload(order, "Order placed with Cash on Delivery")
+    )
     
     return {
         "success": True,

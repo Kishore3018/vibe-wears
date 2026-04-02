@@ -29,6 +29,11 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'checkout-razorpay',
+    loadComponent: () => import('./pages/checkout/razorpay-checkout.component').then(m => m.RazorpayCheckoutComponent),
+    canActivate: [authGuard]
+  },
+  {
     path: 'order-confirmation/:orderNumber',
     loadComponent: () => import('./pages/order-confirmation/order-confirmation.component').then(m => m.OrderConfirmationComponent),
     canActivate: [authGuard]

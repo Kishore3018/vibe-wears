@@ -28,8 +28,9 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
               </div>
             </div>
             <a 
-              href="https://wa.me/919876543210?text=Hi! I need help with my order on Vibe Wears" 
+              [href]="buildWhatsAppUrl('Hi! I need help with my order on Vibe Wears')"
               target="_blank"
+              rel="noopener noreferrer"
               class="whatsapp-chat-btn"
             >
               <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -38,16 +39,17 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
               Start Chat
             </a>
             <div class="quick-options">
-              <a href="https://wa.me/919876543210?text=Track my order" target="_blank">Track Order</a>
-              <a href="https://wa.me/919876543210?text=Size inquiry" target="_blank">Size Help</a>
-              <a href="https://wa.me/919876543210?text=Return request" target="_blank">Returns</a>
+              <a [href]="buildWhatsAppUrl('Track my order')" target="_blank" rel="noopener noreferrer">Track Order</a>
+              <a [href]="buildWhatsAppUrl('Size inquiry')" target="_blank" rel="noopener noreferrer">Size Help</a>
+              <a [href]="buildWhatsAppUrl('Return request')" target="_blank" rel="noopener noreferrer">Returns</a>
             </div>
           </div>
         }
         <button 
           class="fab whatsapp-fab"
-          (click)="toggleWhatsApp()"
+          (click)="onWhatsAppFabClick($event)"
           [class.active]="showWhatsAppMenu()"
+          aria-label="Contact support on WhatsApp"
         >
           @if (showWhatsAppMenu()) {
             <span class="material-icons">close</span>
@@ -268,6 +270,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 export class FloatingButtonsComponent implements OnInit, OnDestroy {
   showBackToTop = signal(false);
   showWhatsAppMenu = signal(false);
+  private readonly whatsappNumber = '918524080713';
 
   constructor() {}
   
@@ -292,6 +295,20 @@ export class FloatingButtonsComponent implements OnInit, OnDestroy {
 
   toggleWhatsApp() {
     this.showWhatsAppMenu.update(v => !v);
+  }
+
+  buildWhatsAppUrl(message: string): string {
+    return `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent(message)}`;
+  }
+
+  onWhatsAppFabClick(event: MouseEvent): void {
+    if (window.innerWidth <= 768) {
+      event.preventDefault();
+      window.open(this.buildWhatsAppUrl('Hi! I need help with my order on Vibe Wears'), '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    this.toggleWhatsApp();
   }
 
   scrollToTop() {

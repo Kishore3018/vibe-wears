@@ -357,8 +357,9 @@ import { OrderService, Order } from '@core/services/order.service';
     }
 
     .order-card {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--surface-card);
+      border: 1px solid var(--surface-card-border);
+      border-radius: 24px;
       overflow: hidden;
       transition: all 0.3s ease;
 
@@ -373,8 +374,8 @@ import { OrderService, Order } from '@core/services/order.service';
       justify-content: space-between;
       align-items: center;
       padding: 1.5rem 2rem;
-      background: rgba(255, 255, 255, 0.03);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--surface-card-muted);
+      border-bottom: 1px solid var(--surface-card-border);
     }
 
     .order-info {
@@ -393,7 +394,7 @@ import { OrderService, Order } from '@core/services/order.service';
       .order-date {
         font-family: 'Montserrat', sans-serif;
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--text-secondary);
       }
     }
 
@@ -475,8 +476,8 @@ import { OrderService, Order } from '@core/services/order.service';
       align-items: center;
       gap: 1rem;
       padding: 1rem 2rem;
-      background: rgba(201, 169, 98, 0.08);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: #f8f6f1;
+      border-bottom: 1px solid var(--surface-card-border);
 
       .material-icons-outlined {
         font-size: 1.5rem;
@@ -492,7 +493,7 @@ import { OrderService, Order } from '@core/services/order.service';
         .tracking-label {
           font-family: 'Montserrat', sans-serif;
           font-size: 0.7rem;
-          color: rgba(255, 255, 255, 0.5);
+          color: var(--text-secondary);
           text-transform: uppercase;
           letter-spacing: 1px;
         }
@@ -500,7 +501,7 @@ import { OrderService, Order } from '@core/services/order.service';
         .tracking-number {
           font-family: 'Montserrat', sans-serif;
           font-weight: 600;
-          color: var(--text-light);
+          color: var(--text-primary);
           letter-spacing: 1px;
         }
       }
@@ -521,8 +522,8 @@ import { OrderService, Order } from '@core/services/order.service';
       align-items: center;
       justify-content: center;
       padding: 1.5rem 2rem;
-      background: rgba(255, 255, 255, 0.02);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--surface-card-muted);
+      border-bottom: 1px solid var(--surface-card-border);
     }
 
     .progress-step {
@@ -541,19 +542,19 @@ import { OrderService, Order } from '@core/services/order.service';
         justify-content: center;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.05);
-        border: 2px solid rgba(255, 255, 255, 0.1);
+        border: 2px solid #d1d5db;
         transition: all 0.3s ease;
 
         .material-icons {
           font-size: 1.25rem;
-          color: rgba(255, 255, 255, 0.5);
+          color: #6b7280;
         }
       }
 
       .step-label {
         font-family: 'Montserrat', sans-serif;
         font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: #6b7280;
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
@@ -594,7 +595,7 @@ import { OrderService, Order } from '@core/services/order.service';
     .progress-line {
       width: 60px;
       height: 2px;
-      background: rgba(255, 255, 255, 0.1);
+      background: #d1d5db;
       margin: 0 0.25rem;
       margin-bottom: 1.5rem;
       transition: background 0.3s ease;
@@ -627,6 +628,9 @@ import { OrderService, Order } from '@core/services/order.service';
     /* Order Items */
     .order-items {
       padding: 1.5rem 2rem;
+      background: var(--surface-card);
+      border-top: 1px solid var(--surface-card-border);
+      border-bottom: 1px solid var(--surface-card-border);
     }
 
     .order-item {
@@ -634,7 +638,7 @@ import { OrderService, Order } from '@core/services/order.service';
       align-items: center;
       gap: 1.25rem;
       padding: 1.25rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--surface-card-border);
 
       &:first-child {
         padding-top: 0;
@@ -651,12 +655,12 @@ import { OrderService, Order } from '@core/services/order.service';
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: var(--surface-card-muted);
+        border: 1px solid var(--surface-card-border);
 
         .material-icons-outlined {
           font-size: 1.75rem;
-          color: rgba(255, 255, 255, 0.3);
+          color: var(--text-secondary);
         }
       }
 
@@ -669,19 +673,19 @@ import { OrderService, Order } from '@core/services/order.service';
         .item-name {
           font-family: 'Montserrat', sans-serif;
           font-weight: 500;
-          color: var(--text-light);
+          color: var(--text-primary);
         }
 
         .item-variant {
           font-family: 'Montserrat', sans-serif;
           font-size: 0.8rem;
-          color: rgba(255, 255, 255, 0.5);
+          color: var(--text-secondary);
         }
 
         .item-qty {
           font-family: 'Montserrat', sans-serif;
           font-size: 0.8rem;
-          color: rgba(255, 255, 255, 0.4);
+          color: var(--text-secondary);
         }
       }
 
@@ -701,7 +705,7 @@ import { OrderService, Order } from '@core/services/order.service';
         .unit-price {
           font-family: 'Montserrat', sans-serif;
           font-size: 0.75rem;
-          color: rgba(255, 255, 255, 0.4);
+          color: var(--text-secondary);
         }
       }
     }
@@ -709,9 +713,9 @@ import { OrderService, Order } from '@core/services/order.service';
     /* Shipping Info */
     .shipping-info {
       padding: 1.25rem 2rem;
-      background: rgba(255, 255, 255, 0.02);
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--surface-card-muted);
+      border-top: 1px solid var(--surface-card-border);
+      border-bottom: 1px solid var(--surface-card-border);
 
       .shipping-header {
         display: flex;
@@ -723,7 +727,7 @@ import { OrderService, Order } from '@core/services/order.service';
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 1px;
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--text-secondary);
 
         .material-icons-outlined {
           font-size: 1rem;
@@ -736,16 +740,16 @@ import { OrderService, Order } from '@core/services/order.service';
         gap: 0.25rem;
         font-family: 'Montserrat', sans-serif;
         font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.7);
+        color: var(--text-secondary);
         line-height: 1.5;
 
         .name {
           font-weight: 600;
-          color: var(--text-light);
+          color: var(--text-primary);
         }
 
         .phone {
-          color: rgba(255, 255, 255, 0.5);
+          color: var(--text-secondary);
         }
       }
     }
@@ -756,8 +760,8 @@ import { OrderService, Order } from '@core/services/order.service';
       justify-content: space-between;
       align-items: flex-end;
       padding: 1.5rem 2rem;
-      background: rgba(255, 255, 255, 0.03);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--surface-card-muted);
+      border-top: 1px solid var(--surface-card-border);
     }
 
     .order-summary {
@@ -771,7 +775,7 @@ import { OrderService, Order } from '@core/services/order.service';
         justify-content: space-between;
         font-family: 'Montserrat', sans-serif;
         font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--text-secondary);
 
         &.discount {
           color: #10b981;
@@ -787,7 +791,7 @@ import { OrderService, Order } from '@core/services/order.service';
         font-family: 'Cormorant Garamond', serif;
         font-size: 1.25rem;
         font-weight: 600;
-        color: var(--text-light);
+        color: var(--text-primary);
 
         span:last-child {
           color: var(--accent-color);

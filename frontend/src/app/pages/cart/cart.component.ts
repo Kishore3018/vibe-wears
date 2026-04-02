@@ -275,8 +275,8 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
 
     /* Cart Items */
     .cart-items {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--surface-card);
+      border: 1px solid var(--surface-card-border);
       overflow: hidden;
     }
 
@@ -285,8 +285,8 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
       grid-template-columns: 2fr 1fr 1fr 1fr 40px;
       gap: 1rem;
       padding: 1.25rem 1.5rem;
-      background: rgba(255, 255, 255, 0.03);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--surface-card-muted);
+      border-bottom: 1px solid var(--surface-card-border);
       font-family: 'Montserrat', sans-serif;
       font-weight: 600;
       font-size: 0.7rem;
@@ -300,7 +300,7 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
       grid-template-columns: 2fr 1fr 1fr 1fr 40px;
       gap: 1rem;
       padding: 1.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid var(--surface-card-border);
       align-items: center;
 
       &:last-of-type {
@@ -319,7 +319,7 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
       height: 90px;
       overflow: hidden;
       flex-shrink: 0;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--surface-card-border);
 
       img {
         width: 100%;
@@ -343,7 +343,7 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.1rem;
       font-weight: 500;
-      color: var(--text-light);
+      color: var(--text-primary);
       transition: color 0.3s ease;
 
       &:hover {
@@ -353,17 +353,17 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
 
     .item-variant {
       font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.5);
+      color: var(--text-secondary);
       letter-spacing: 0.5px;
     }
 
     .col-price {
-      color: var(--text-light);
+      color: var(--text-primary);
 
       .original-price {
         display: block;
         text-decoration: line-through;
-        color: rgba(255, 255, 255, 0.4);
+        color: var(--text-secondary);
         font-size: 0.85rem;
       }
 
@@ -376,7 +376,7 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
     .quantity-selector {
       display: inline-flex;
       align-items: center;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--surface-card-border);
 
       button {
         width: 36px;
@@ -387,11 +387,11 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--text-light);
+        color: var(--text-primary);
         transition: all 0.3s ease;
 
         &:hover:not(:disabled) {
-          background: rgba(255, 255, 255, 0.05);
+          background: var(--bg-tertiary);
           color: var(--accent-color);
         }
 
@@ -409,12 +409,12 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
         width: 48px;
         height: 36px;
         border: none;
-        border-left: 1px solid rgba(255, 255, 255, 0.15);
-        border-right: 1px solid rgba(255, 255, 255, 0.15);
+        border-left: 1px solid var(--surface-card-border);
+        border-right: 1px solid var(--surface-card-border);
         text-align: center;
         font-size: 0.9rem;
         background: transparent;
-        color: var(--text-light);
+        color: var(--text-primary);
         font-family: 'Montserrat', sans-serif;
 
         &:focus {
@@ -431,7 +431,7 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
 
     .col-total {
       font-size: 1.1rem;
-      color: var(--text-light);
+      color: var(--text-primary);
 
       strong {
         font-weight: 600;
@@ -460,8 +460,8 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
     /* Coupon */
     .coupon-section {
       padding: 1.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid var(--surface-card-border);
+      background: var(--surface-card-muted);
     }
 
     .coupon-input {

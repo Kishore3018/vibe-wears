@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -6,8 +6,9 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
 import { AuthService } from '@core/services/auth.service';
 import { OrderService, AddressCreate, Address, Order } from '@core/services/order.service';
 import { PaymentService } from '@core/services/payment.service';
+import { WebsocketService } from '@core/services/websocket.service';
 import { switchMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { of, interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-checkout',
@@ -311,9 +312,9 @@ import { of } from 'rxjs';
                             <div class="qr-section">
                               <div class="qr-placeholder">
                                 <span class="material-icons">qr_code_2</span>
-                                <p>QR Code will appear after order confirmation</p>
+                                <p>Secure UPI QR opens in Razorpay payment window</p>
                               </div>
-                              <p class="qr-instructions">Scan with any UPI app to pay</p>
+                              <p class="qr-instructions">Continue to Review, then click Pay to open QR and scan using any UPI app</p>
                             </div>
                           }
                         </div>
@@ -585,6 +586,21 @@ import { of } from 'rxjs';
                     </div>
                   }
 
+                  @if (paymentRealtimeMessage()) {
+                    <div class="payment-live-banner" [class.success]="paymentRealtimeState() === 'completed'" [class.failed]="paymentRealtimeState() === 'failed'">
+                      <span class="material-icons">
+                        @if (paymentRealtimeState() === 'completed') {
+                          check_circle
+                        } @else if (paymentRealtimeState() === 'failed') {
+                          error
+                        } @else {
+                          hourglass_top
+                        }
+                      </span>
+                      <span>{{ paymentRealtimeMessage() }}</span>
+                    </div>
+                  }
+
                   <div class="review-section">
                     <div class="review-block">
                       <div class="review-header">
@@ -617,7 +633,9 @@ import { of } from 'rxjs';
                             <img src="https://cdn.razorpay.com/static/assets/logo/payment/upi.svg" alt="UPI" height="24">
                             <div>
                               <span class="payment-name">UPI</span>
-                              @if (upiIdControl.value) {
+                              @if (upiMethod() === 'qr') {
+                                <span class="payment-detail">UPI QR will open in Razorpay when you click Pay</span>
+                              } @else if (upiIdControl.value) {
                                 <span class="payment-detail">{{ upiIdControl.value }}</span>
                               }
                             </div>
@@ -684,6 +702,8 @@ import { of } from 'rxjs';
                       @if (processing()) {
                         <span class="spinner"></span>
                         Processing...
+                      } @else if (selectedPaymentType() === 'upi' && upiMethod() === 'qr') {
+                        Open UPI QR - {{ total() | currency:'INR':'symbol':'1.0-0' }}
                       } @else if (selectedPaymentType() === 'cod') {
                         Place Order - {{ totalWithCod() | currency:'INR':'symbol':'1.0-0' }}
                       } @else {
@@ -1905,6 +1925,44 @@ import { of } from 'rxjs';
       }
     }
 
+    .payment-live-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+
+      .material-icons {
+        color: #f59e0b;
+      }
+
+      span {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.9rem;
+      }
+
+      &.success {
+        background: rgba(16, 185, 129, 0.12);
+        border-color: rgba(16, 185, 129, 0.35);
+
+        .material-icons {
+          color: #10b981;
+        }
+      }
+
+      &.failed {
+        background: rgba(239, 68, 68, 0.12);
+        border-color: rgba(239, 68, 68, 0.35);
+
+        .material-icons {
+          color: #ef4444;
+        }
+      }
+    }
+
     .review-section {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -2116,8 +2174,8 @@ import { of } from 'rxjs';
 
     /* Order Summary Enhanced */
     .order-summary {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: var(--surface-card);
+      border: 1px solid var(--surface-card-border);
       border-radius: 8px;
       padding: 2rem;
       position: sticky;
@@ -2129,8 +2187,8 @@ import { of } from 'rxjs';
         font-weight: 600;
         margin-bottom: 1.5rem;
         padding-bottom: 1rem;
-        border-bottom: 1px solid rgba(201, 169, 98, 0.3);
-        color: var(--text-light);
+        border-bottom: 1px solid var(--surface-card-border);
+        color: var(--text-primary);
       }
     }
 
@@ -2138,7 +2196,7 @@ import { of } from 'rxjs';
     .coupon-section {
       margin-bottom: 1.5rem;
       padding-bottom: 1.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid var(--surface-card-border);
     }
 
     .coupon-input-wrapper {
@@ -2148,9 +2206,9 @@ import { of } from 'rxjs';
       input {
         flex: 1;
         padding: 0.75rem 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        background: rgba(255, 255, 255, 0.03);
-        color: var(--text-light);
+        border: 1px solid var(--surface-card-border);
+        background: var(--surface-card-muted);
+        color: var(--text-primary);
         font-size: 0.9rem;
         text-transform: uppercase;
 
@@ -2215,7 +2273,7 @@ import { of } from 'rxjs';
         .coupon-code {
           display: block;
           font-weight: 600;
-          color: var(--text-light);
+          color: var(--text-primary);
           font-size: 0.9rem;
         }
 
@@ -2229,7 +2287,7 @@ import { of } from 'rxjs';
         background: none;
         border: none;
         cursor: pointer;
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--text-secondary);
         padding: 0.25rem;
 
         &:hover {
@@ -2243,14 +2301,18 @@ import { of } from 'rxjs';
       overflow-y: auto;
       margin-bottom: 1.5rem;
       padding-bottom: 1.5rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid var(--surface-card-border);
+      background: var(--surface-card);
+      border: 1px solid var(--surface-card-border);
+      border-radius: 8px;
+      padding: 0.75rem;
 
       &::-webkit-scrollbar {
         width: 4px;
       }
 
       &::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--surface-card-muted);
       }
 
       &::-webkit-scrollbar-thumb {
@@ -2262,9 +2324,14 @@ import { of } from 'rxjs';
       display: flex;
       gap: 1rem;
       margin-bottom: 1rem;
+      align-items: center;
+      border-bottom: 1px solid var(--surface-card-border);
+      padding-bottom: 0.75rem;
 
       &:last-child {
         margin-bottom: 0;
+        border-bottom: none;
+        padding-bottom: 0;
       }
     }
 
@@ -2273,7 +2340,7 @@ import { of } from 'rxjs';
       width: 50px;
       height: 50px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--surface-card-border);
       border-radius: 4px;
 
       img {
@@ -2311,7 +2378,8 @@ import { of } from 'rxjs';
       font-family: 'Montserrat', sans-serif;
       font-size: 0.85rem;
       margin-bottom: 0.25rem;
-      color: var(--text-light);
+      color: var(--text-primary);
+      font-weight: 600;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -2335,7 +2403,7 @@ import { of } from 'rxjs';
       margin-bottom: 0.75rem;
       font-family: 'Montserrat', sans-serif;
       font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.6);
+      color: var(--text-secondary);
 
       &.discount {
         color: #10b981;
@@ -2360,11 +2428,11 @@ import { of } from 'rxjs';
       justify-content: space-between;
       padding-top: 1.25rem;
       margin-top: 1rem;
-      border-top: 1px solid rgba(201, 169, 98, 0.3);
+      border-top: 1px solid var(--surface-card-border);
       font-family: 'Montserrat', sans-serif;
       font-size: 1.1rem;
       font-weight: 600;
-      color: var(--text-light);
+      color: var(--text-primary);
 
       strong {
         color: var(--accent-color);
@@ -2392,7 +2460,7 @@ import { of } from 'rxjs';
       display: flex;
       justify-content: space-around;
       padding-top: 1.5rem;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid var(--surface-card-border);
 
       .badge {
         display: flex;
@@ -2408,7 +2476,7 @@ import { of } from 'rxjs';
 
         span {
           font-size: 0.7rem;
-          color: rgba(255, 255, 255, 0.6);
+          color: var(--text-secondary);
         }
       }
     }
@@ -2504,7 +2572,7 @@ import { of } from 'rxjs';
     }
   `]
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy {
   cartItems = signal<CartItem[]>([]);
   currentStep = signal(1);
   processing = signal(false);
@@ -2512,6 +2580,12 @@ export class CheckoutComponent implements OnInit {
   savedAddresses = signal<Address[]>([]);
   selectedAddressId = signal<number | null>(null);
   createdOrder = signal<Order | null>(null);
+  paymentRealtimeMessage = signal<string | null>(null);
+  paymentRealtimeState = signal<'idle' | 'creating' | 'pending' | 'completed' | 'failed'>('idle');
+
+  private websocketSub?: Subscription;
+  private paymentPollSub?: Subscription;
+  private paymentResolved = false;
 
   // Payment State
   selectedPaymentType = signal<'upi' | 'card' | 'netbanking' | 'wallet' | 'cod'>('upi');
@@ -2583,6 +2657,7 @@ export class CheckoutComponent implements OnInit {
     private authService: AuthService,
     private orderService: OrderService,
     private paymentService: PaymentService,
+    private websocketService: WebsocketService,
     private router: Router
   ) {
     this.shippingForm = this.fb.group({
@@ -2650,6 +2725,12 @@ export class CheckoutComponent implements OnInit {
     this.loadCart();
     this.prefillUserData();
     this.loadSavedAddresses();
+    this.setupRealtimePaymentListener();
+  }
+
+  ngOnDestroy(): void {
+    this.stopPaymentTracking();
+    this.websocketSub?.unsubscribe();
   }
 
   loadCart(): void {
@@ -2899,6 +2980,9 @@ export class CheckoutComponent implements OnInit {
   placeOrder(): void {
     this.processing.set(true);
     this.errorMessage.set(null);
+    this.paymentRealtimeState.set('creating');
+    this.paymentRealtimeMessage.set('Creating your order...');
+    this.paymentResolved = false;
 
     const formValue = this.shippingForm.value;
     
@@ -2941,6 +3025,12 @@ export class CheckoutComponent implements OnInit {
         }
         
         this.createdOrder.set(order);
+        this.paymentRealtimeState.set('pending');
+        this.paymentRealtimeMessage.set('Order created. Waiting for payment confirmation...');
+
+        if (this.selectedPaymentType() !== 'cod') {
+          this.startPaymentTracking(order.order_number);
+        }
         
         if (this.selectedPaymentType() === 'cod') {
           return this.paymentService.markCOD(order.id);
@@ -2962,17 +3052,117 @@ export class CheckoutComponent implements OnInit {
         }
 
         this.errorMessage.set(errorMsg);
+        this.paymentRealtimeState.set('failed');
+        this.paymentRealtimeMessage.set(errorMsg);
+        this.stopPaymentTracking();
         this.processing.set(false);
         return of(null);
       })
     ).subscribe({
       next: (result) => {
         if (result && result.success) {
+          this.paymentResolved = true;
+          this.paymentRealtimeState.set('completed');
+          this.paymentRealtimeMessage.set('Payment confirmed. Redirecting...');
+          this.stopPaymentTracking();
           this.cartService.clearCart().subscribe();
           this.router.navigate(['/order-confirmation', result.order_number]);
         }
         this.processing.set(false);
       }
     });
+  }
+
+  private setupRealtimePaymentListener(): void {
+    this.websocketService.connect();
+    this.websocketSub = this.websocketService.messages$.subscribe((message) => {
+      if (message.type !== 'order_update') {
+        return;
+      }
+
+      const createdOrder = this.createdOrder();
+      if (!createdOrder) {
+        return;
+      }
+
+      const data = message.data || {};
+      const sameOrder = data.order_id === createdOrder.id || data.order_number === createdOrder.order_number;
+      if (!sameOrder) {
+        return;
+      }
+
+      const paymentStatus = this.normalizeStatus(data.payment_status);
+      const eventMessage = data.message || this.paymentRealtimeMessage() || 'Payment status updated';
+
+      if (paymentStatus === 'completed') {
+        this.paymentRealtimeState.set('completed');
+        this.paymentRealtimeMessage.set('Payment completed. Redirecting...');
+        this.stopPaymentTracking();
+
+        if (!this.paymentResolved) {
+          this.paymentResolved = true;
+          this.processing.set(false);
+          this.cartService.clearCart().subscribe();
+          this.router.navigate(['/order-confirmation', createdOrder.order_number]);
+        }
+        return;
+      }
+
+      if (paymentStatus === 'failed') {
+        this.paymentRealtimeState.set('failed');
+        this.paymentRealtimeMessage.set(eventMessage);
+        this.errorMessage.set(eventMessage);
+        this.stopPaymentTracking();
+        this.processing.set(false);
+        return;
+      }
+
+      this.paymentRealtimeState.set('pending');
+      this.paymentRealtimeMessage.set(eventMessage);
+    });
+  }
+
+  private startPaymentTracking(orderNumber: string): void {
+    this.stopPaymentTracking();
+    this.paymentPollSub = interval(3000).pipe(
+      switchMap(() => this.orderService.getOrder(orderNumber)),
+      catchError(() => of(null))
+    ).subscribe((order) => {
+      if (!order) {
+        return;
+      }
+
+      const paymentStatus = this.normalizeStatus(order.payment_status);
+      if (paymentStatus === 'completed' || paymentStatus === 'failed') {
+        this.websocketService.send({ type: 'ping' });
+        this.paymentRealtimeMessage.set(
+          paymentStatus === 'completed' ? 'Payment completed. Redirecting...' : 'Payment failed. Please try again.'
+        );
+        this.paymentRealtimeState.set(paymentStatus === 'completed' ? 'completed' : 'failed');
+
+        if (paymentStatus === 'completed' && !this.paymentResolved) {
+          this.paymentResolved = true;
+          this.processing.set(false);
+          this.cartService.clearCart().subscribe();
+          this.router.navigate(['/order-confirmation', order.order_number]);
+        }
+
+        if (paymentStatus === 'failed') {
+          this.errorMessage.set('Payment failed. Your cart has been restored.');
+          this.processing.set(false);
+        }
+
+        this.stopPaymentTracking();
+      }
+    });
+  }
+
+  private stopPaymentTracking(): void {
+    this.paymentPollSub?.unsubscribe();
+    this.paymentPollSub = undefined;
+  }
+
+  private normalizeStatus(status: unknown): string {
+    return String(status || '').toLowerCase();
   }
 }

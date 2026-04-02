@@ -85,8 +85,8 @@ import { AuthService, User } from '@core/services/auth.service';
       align-items: center;
       gap: 1rem;
       padding: 1.5rem;
-      background: linear-gradient(135deg, rgba(201, 169, 98, 0.2) 0%, rgba(201, 169, 98, 0.05) 100%);
-      border-bottom: 1px solid rgba(201, 169, 98, 0.2);
+      background: #f8f6f1;
+      border-bottom: 1px solid #e6deca;
     }
 
     .user-avatar {
@@ -106,14 +106,14 @@ import { AuthService, User } from '@core/services/auth.service';
       h3 {
         font-family: 'Cormorant Garamond', serif;
         font-size: 1.1rem;
-        color: #ffffff;
+        color: #1f2937;
         margin-bottom: 0.25rem;
       }
 
       p {
         font-family: 'Montserrat', sans-serif;
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: #4b5563;
       }
     }
 

@@ -64,7 +64,7 @@ import { AdminService, AdminUser } from '../../../core/services/admin.service';
                       {{ getInitials(user) }}
                     </div>
                     <div class="user-info">
-                      <span class="user-name">{{ user.full_name || 'No name' }}</span>
+                      <span class="user-name">{{ getDisplayName(user) }}</span>
                       <span class="user-email">{{ user.email }}</span>
                     </div>
                   </div>
@@ -140,7 +140,7 @@ import { AdminService, AdminUser } from '../../../core/services/admin.service';
                 <div class="profile-avatar large">
                   {{ getInitials(selectedUser()!) }}
                 </div>
-                <h3>{{ selectedUser()?.full_name || 'No name' }}</h3>
+                <h3>{{ getDisplayName(selectedUser()) }}</h3>
                 <p>{{ selectedUser()?.email }}</p>
               </div>
 
@@ -743,9 +743,29 @@ export class AdminUsersComponent implements OnInit {
     this.loadUsers();
   }
 
+  getDisplayName(user: AdminUser | null | undefined): string {
+    if (!user) return 'No name';
+
+    const fullName = user.full_name?.trim();
+    if (fullName) return fullName;
+
+    const first = user.first_name?.trim() || '';
+    const last = user.last_name?.trim() || '';
+    const combined = `${first} ${last}`.trim();
+
+    return combined || 'No name';
+  }
+
   getInitials(user: AdminUser): string {
-    if (user.full_name) {
-      return user.full_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    const displayName = this.getDisplayName(user);
+    if (displayName !== 'No name') {
+      return displayName
+        .split(' ')
+        .filter(part => part.length > 0)
+        .map(part => part[0])
+        .join('')
+        .substring(0, 2)
+        .toUpperCase();
     }
     return user.email.substring(0, 2).toUpperCase();
   }
