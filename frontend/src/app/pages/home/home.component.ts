@@ -1,7 +1,8 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ProductService, ProductListItem, Category } from '@core/services/product.service';
+import { LanguageService } from '@core/services/language.service';
 import { ProductCardComponent } from '@shared/components/product-card/product-card.component';
 
 @Component({
@@ -13,25 +14,25 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
     <section class="hero">
       <div class="hero-overlay"></div>
       <div class="hero-content">
-        <span class="hero-badge">Exclusive Collection 2026</span>
-        <h1>Elevate Your<br/><span class="text-gold">Elegance</span></h1>
-        <p>Discover timeless men's fashion pieces crafted for the distinguished gentleman. Where luxury meets contemporary style.</p>
+        <span class="hero-badge">{{ labels().heroBadge }}</span>
+        <h1>{{ labels().heroTitleLine1 }}<br/><span class="text-gold">{{ labels().heroTitleLine2 }}</span></h1>
+        <p>{{ labels().heroDescription }}</p>
         <div class="hero-buttons">
-          <a routerLink="/products" class="btn btn-secondary">Explore Collection</a>
-          <a routerLink="/products" [queryParams]="{is_new_arrival: true}" class="btn btn-outline-light">New Arrivals</a>
+          <a routerLink="/products" class="btn btn-secondary">{{ labels().explore }}</a>
+          <a routerLink="/products" [queryParams]="{is_new_arrival: true}" class="btn btn-outline-light">{{ labels().newArrivals }}</a>
         </div>
         <div class="hero-features">
           <div class="hero-feature">
             <span class="material-icons-outlined">verified</span>
-            <span>Premium Quality</span>
+            <span>{{ labels().premiumQuality }}</span>
           </div>
           <div class="hero-feature">
             <span class="material-icons-outlined">local_shipping</span>
-            <span>Free Shipping</span>
+            <span>{{ labels().freeShipping }}</span>
           </div>
           <div class="hero-feature">
             <span class="material-icons-outlined">support_agent</span>
-            <span>24/7 Support</span>
+            <span>{{ labels().support }}</span>
           </div>
         </div>
       </div>
@@ -67,9 +68,9 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
     <section class="categories section">
       <div class="container">
         <div class="section-header">
-          <span class="section-subtitle">Curated For Him</span>
-          <h2>Shop by Category</h2>
-          <p>Explore our carefully curated men's collections designed for every occasion</p>
+          <span class="section-subtitle">{{ labels().curatedForHim }}</span>
+          <h2>{{ labels().shopByCategory }}</h2>
+          <p>{{ labels().categoryDescription }}</p>
         </div>
         <div class="category-grid">
           @for (category of categories(); track category.id; let i = $index) {
@@ -93,9 +94,9 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
     <section class="products-section section bg-secondary">
       <div class="container">
         <div class="section-header">
-          <span class="section-subtitle">Hand Selected</span>
-          <h2>Featured Products</h2>
-          <p>Discover our most coveted pieces, chosen for their exceptional quality and design</p>
+          <span class="section-subtitle">{{ labels().featuredTitle }}</span>
+          <h2>{{ labels().featuredTitle }}</h2>
+          <p>{{ labels().featuredDescription }}</p>
         </div>
         <div class="products-grid">
           @if (loadingFeatured()) {
@@ -110,7 +111,7 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
         </div>
         <div class="section-footer">
           <a routerLink="/products" [queryParams]="{is_featured: true}" class="view-all-link">
-            View All Featured
+            {{ labels().viewAllFeatured }}
             <span class="link-arrow">
               <span class="material-icons">arrow_forward</span>
             </span>
@@ -124,26 +125,26 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
       <div class="container">
         <div class="banner-grid">
           <div class="banner-card main-banner">
-            <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1200&q=80" alt="Summer Collection">
+            <img src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRGfEMvelkRwmEt-O3dDIU2KI-aXVSpRuU32oBn2T9YKl9Kd_UAvMCaIMYATuB5tAFW5VlInenMLhZbtdNFROgKvxFiihiUybb96PmWPly4" alt="Summer Collection">
             <div class="banner-overlay">
               <span class="banner-tag">Limited Edition</span>
-              <h3>Summer<br/>Collection</h3>
+              <h3>{{ labels().summerCollection }}</h3>
               <p>Up to 40% Off Selected Items</p>
-              <a routerLink="/products" class="btn btn-secondary">Shop Now</a>
+              <a routerLink="/products" class="btn btn-secondary">{{ labels().shopNow }}</a>
             </div>
           </div>
           <div class="banner-side">
             <div class="banner-card">
               <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&q=80" alt="Topwear Collection">
               <div class="banner-overlay">
-                <h4>Topwear</h4>
+                <h4>{{ labels().topwear }}</h4>
                 <a routerLink="/products" [queryParams]="{category: 'topwear'}" class="banner-link">Explore <span class="material-icons">east</span></a>
               </div>
             </div>
             <div class="banner-card">
-              <img src="https://images.unsplash.com/photo-1507680434567-5739c80be1ac?w=600&q=80" alt="Ethnic Wear Collection">
+              <img src="https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&q=80" alt="Bottomwear Collection">
               <div class="banner-overlay">
-                <h4>Ethnic Wear</h4>
+                <h4>{{ labels().ethnicWear }}</h4>
                 <a routerLink="/products" [queryParams]="{category: 'ethnic-wear'}" class="banner-link">Explore <span class="material-icons">east</span></a>
               </div>
             </div>
@@ -156,9 +157,9 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
     <section class="products-section section">
       <div class="container">
         <div class="section-header">
-          <span class="section-subtitle">Just Landed</span>
-          <h2>New Arrivals</h2>
-          <p>Fresh styles straight from our latest collection</p>
+          <span class="section-subtitle">{{ labels().justLanded }}</span>
+          <h2>{{ labels().newArrivals }}</h2>
+          <p>{{ labels().freshStyles }}</p>
         </div>
         <div class="products-grid">
           @if (loadingNewArrivals()) {
@@ -173,7 +174,7 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
         </div>
         <div class="section-footer">
           <a routerLink="/products" [queryParams]="{is_new_arrival: true}" class="view-all-link">
-            View All New Arrivals
+            {{ labels().viewAllNewArrivals }}
             <span class="link-arrow">
               <span class="material-icons">arrow_forward</span>
             </span>
@@ -190,29 +191,29 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
             <div class="feature-icon">
               <span class="material-icons-outlined">local_shipping</span>
             </div>
-            <h4>Complimentary Shipping</h4>
-            <p>Free shipping on all orders over ₹999</p>
+            <h4>{{ labels().complimentaryShipping }}</h4>
+            <p>{{ labels().complimentaryShippingText }}</p>
           </div>
           <div class="feature-item">
             <div class="feature-icon">
               <span class="material-icons-outlined">autorenew</span>
             </div>
-            <h4>Easy Returns</h4>
-            <p>30-day hassle-free return policy</p>
+            <h4>{{ labels().easyReturns }}</h4>
+            <p>{{ labels().easyReturnsText }}</p>
           </div>
           <div class="feature-item">
             <div class="feature-icon">
               <span class="material-icons-outlined">shield</span>
             </div>
-            <h4>Secure Payment</h4>
-            <p>100% secure checkout experience</p>
+            <h4>{{ labels().securePayment }}</h4>
+            <p>{{ labels().securePaymentText }}</p>
           </div>
           <div class="feature-item">
             <div class="feature-icon">
               <span class="material-icons-outlined">headset_mic</span>
             </div>
-            <h4>Premium Support</h4>
-            <p>Dedicated 24/7 customer care</p>
+            <h4>{{ labels().premiumSupport }}</h4>
+            <p>{{ labels().premiumSupportText }}</p>
           </div>
         </div>
       </div>
@@ -222,9 +223,9 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
     <section class="products-section section bg-secondary">
       <div class="container">
         <div class="section-header">
-          <span class="section-subtitle">Most Loved</span>
-          <h2>Best Sellers</h2>
-          <p>Our customers' favorites, loved for their quality and style</p>
+          <span class="section-subtitle">{{ labels().mostLoved }}</span>
+          <h2>{{ labels().bestSellers }}</h2>
+          <p>{{ labels().bestSellersDescription }}</p>
         </div>
         <div class="products-grid">
           @if (loadingBestSellers()) {
@@ -239,7 +240,7 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
         </div>
         <div class="section-footer">
           <a routerLink="/products" [queryParams]="{sort_by: 'popular'}" class="view-all-link">
-            View All Best Sellers
+            {{ labels().viewAllBestSellers }}
             <span class="link-arrow">
               <span class="material-icons">arrow_forward</span>
             </span>
@@ -253,16 +254,16 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
       <div class="newsletter-bg"></div>
       <div class="container">
         <div class="newsletter-content">
-          <span class="section-subtitle">Stay Connected</span>
-          <h2>Join Our <span class="text-gold">Exclusive</span> Circle</h2>
-          <p>Subscribe to receive early access to new collections, exclusive offers, and style inspiration.</p>
+          <span class="section-subtitle">{{ labels().stayConnected }}</span>
+          <h2 [innerHTML]="labels().joinCircle"></h2>
+          <p>{{ labels().newsletterDescription }}</p>
           <form class="newsletter-form" (submit)="onSubscribe($event)">
             <div class="input-wrapper">
               <input type="email" placeholder="Enter your email address" required>
-              <button type="submit" class="btn btn-secondary">Subscribe</button>
+              <button type="submit" class="btn btn-secondary">{{ labels().subscribe }}</button>
             </div>
           </form>
-          <span class="newsletter-note">By subscribing, you agree to our Privacy Policy</span>
+          <span class="newsletter-note">{{ labels().privacyNote }}</span>
         </div>
       </div>
     </section>
@@ -1008,8 +1009,141 @@ export class HomeComponent implements OnInit {
   loadingFeatured = signal(true);
   loadingNewArrivals = signal(true);
   loadingBestSellers = signal(true);
+  labels = computed(() => {
+    const language = this.languageService.language();
 
-  constructor(private productService: ProductService) {}
+    if (language === 'Tamil') {
+      return {
+        heroBadge: 'எக்ஸ்க்ளூசிவ் சேகரிப்பு 2026',
+        heroTitleLine1: 'உங்கள்',
+        heroTitleLine2: 'நயத்தை உயர்த்துங்கள்',
+        heroDescription: 'மதிப்புமிக்க ஆண்களுக்காக உருவாக்கப்பட்ட காலமற்ற ஆடைகளை கண்டறியுங்கள். ஆடம்பரம் மற்றும் நவீன பாணி ஒன்றாக.',
+        explore: 'சேகரிப்பை பாருங்கள்',
+        newArrivals: 'புதிய வருகைகள்',
+        premiumQuality: 'பிரீமியம் தரம்',
+        freeShipping: 'இலவச ஷிப்பிங்',
+        support: '24/7 உதவி',
+        curatedForHim: 'அவருக்காக தேர்ந்தெடுக்கப்பட்டது',
+        shopByCategory: 'வகைப்படி வாங்குங்கள்',
+        categoryDescription: 'எல்லா நிகழ்வுகளுக்கும் எங்களின் கவனமாக தேர்ந்தெடுத்த ஆண்களுக்கான தொகுப்புகளை ஆராயுங்கள்',
+        featuredTitle: 'சிறப்பு பொருட்கள்',
+        featuredDescription: 'அதிக தரமும் வடிவமைப்பும் கொண்ட எங்கள் மிக விருப்பமான தயாரிப்புகளை கண்டறியுங்கள்',
+        viewAllFeatured: 'அனைத்து சிறப்பு பொருட்களையும் பாருங்கள்',
+        summerCollection: 'கோடை சேகரிப்பு',
+        shopNow: 'இப்போதே வாங்குங்கள்',
+        topwear: 'மேல் ஆடை',
+        ethnicWear: 'பாரம்பரிய ஆடை',
+        justLanded: 'இப்போது வந்தவை',
+        freshStyles: 'எங்கள் சமீபத்திய சேகரிப்பிலிருந்து புதிய பாணிகள்',
+        viewAllNewArrivals: 'அனைத்து புதிய வருகைகளையும் பாருங்கள்',
+        complimentaryShipping: 'இலவச ஷிப்பிங்',
+        complimentaryShippingText: '₹999 க்கும் மேற்பட்ட அனைத்து ஆர்டர்களுக்கும் இலவச ஷிப்பிங்',
+        easyReturns: 'எளிதான ரிட்டர்ன்கள்',
+        easyReturnsText: '30 நாட்கள் தொந்தரவு இல்லாத ரிட்டர்ன் கொள்கை',
+        securePayment: 'பாதுகாப்பான பணப்பரிவர்த்தனை',
+        securePaymentText: '100% பாதுகாப்பான செக் அவுட் அனுபவம்',
+        premiumSupport: 'பிரீமியம் உதவி',
+        premiumSupportText: '24/7 வாடிக்கையாளர் சேவை',
+        mostLoved: 'அதிகம் விரும்பப்பட்டவை',
+        bestSellers: 'அதிக விற்பனை',
+        bestSellersDescription: 'தரமும் பாணியும் காரணமாக எங்கள் வாடிக்கையாளர்களின் விருப்பங்கள்',
+        viewAllBestSellers: 'அனைத்து அதிக விற்பனையையும் பாருங்கள்',
+        stayConnected: 'தொடர்ந்து இணையுங்கள்',
+        joinCircle: 'எங்கள் <span class="text-gold">பிரத்தியேக</span> வட்டத்தில் சேருங்கள்',
+        newsletterDescription: 'புதிய சேகரிப்புகள், சிறப்பு சலுகைகள், மற்றும் பாணி ஊக்கத்திற்கான முன்கூட்டிய அணுகலைப் பெற சந்தா இடுங்கள்.',
+        subscribe: 'சந்தா',
+        privacyNote: 'சந்தா செய்வதன் மூலம், எங்கள் தனியுரிமைக் கொள்கையை ஒப்புக்கொள்கிறீர்கள்'
+      };
+    }
+
+    if (language === 'Hindi') {
+      return {
+        heroBadge: 'एक्सक्लूसिव कलेक्शन 2026',
+        heroTitleLine1: 'अपनी',
+        heroTitleLine2: 'एलिगेंस को बढ़ाएँ',
+        heroDescription: 'समझदार पुरुषों के लिए बने कालातीत फैशन पीस खोजें। जहां लक्ज़री और आधुनिक शैली मिलती है।',
+        explore: 'कलेक्शन देखें',
+        newArrivals: 'नई कलेक्शन',
+        premiumQuality: 'प्रीमियम क्वालिटी',
+        freeShipping: 'फ्री शिपिंग',
+        support: '24/7 सपोर्ट',
+        curatedForHim: 'उनके लिए चुना गया',
+        shopByCategory: 'कैटेगरी के अनुसार खरीदें',
+        categoryDescription: 'हर अवसर के लिए हमारे सावधानी से चुने गए पुरुषों के कलेक्शन देखें',
+        featuredTitle: 'फीचर्ड प्रोडक्ट्स',
+        featuredDescription: 'अपनी असाधारण गुणवत्ता और डिज़ाइन के लिए चुने गए हमारे सबसे पसंदीदा पीस देखें',
+        viewAllFeatured: 'सभी फीचर्ड देखें',
+        summerCollection: 'समर कलेक्शन',
+        shopNow: 'अभी खरीदें',
+        topwear: 'टॉपवियर',
+        ethnicWear: 'एथनिक वियर',
+        justLanded: 'नई लॉन्च',
+        freshStyles: 'हमारे नवीनतम कलेक्शन की नई स्टाइल्स',
+        viewAllNewArrivals: 'सभी नई कलेक्शन देखें',
+        complimentaryShipping: 'मुफ्त शिपिंग',
+        complimentaryShippingText: '₹999 से ऊपर के सभी ऑर्डर पर मुफ्त शिपिंग',
+        easyReturns: 'आसान रिटर्न',
+        easyReturnsText: '30 दिन की आसान रिटर्न नीति',
+        securePayment: 'सुरक्षित भुगतान',
+        securePaymentText: '100% सुरक्षित चेकआउट अनुभव',
+        premiumSupport: 'प्रीमियम सपोर्ट',
+        premiumSupportText: '24/7 ग्राहक सहायता',
+        mostLoved: 'सबसे पसंदीदा',
+        bestSellers: 'बेस्ट सेलर्स',
+        bestSellersDescription: 'गुणवत्ता और स्टाइल के लिए पसंद किए गए हमारे ग्राहकों के फेवरेट',
+        viewAllBestSellers: 'सभी बेस्ट सेलर्स देखें',
+        stayConnected: 'जुड़े रहें',
+        joinCircle: 'हमारे <span class="text-gold">एक्सक्लूसिव</span> सर्कल में जुड़ें',
+        newsletterDescription: 'नई कलेक्शन, एक्सक्लूसिव ऑफ़र और स्टाइल इंस्पिरेशन के लिए सब्सक्राइब करें।',
+        subscribe: 'सब्सक्राइब',
+        privacyNote: 'सब्सक्राइब करके, आप हमारी प्राइवेसी पॉलिसी से सहमत हैं'
+      };
+    }
+
+    return {
+      heroBadge: 'Exclusive Collection 2026',
+      heroTitleLine1: 'Elevate Your',
+      heroTitleLine2: 'Elegance',
+      heroDescription: 'Discover timeless men\'s fashion pieces crafted for the distinguished gentleman. Where luxury meets contemporary style.',
+      explore: 'Explore Collection',
+      newArrivals: 'New Arrivals',
+      premiumQuality: 'Premium Quality',
+      freeShipping: 'Free Shipping',
+      support: '24/7 Support',
+      curatedForHim: 'Curated For Him',
+      shopByCategory: 'Shop by Category',
+      categoryDescription: 'Explore our carefully curated men\'s collections designed for every occasion',
+      featuredTitle: 'Featured Products',
+      featuredDescription: 'Discover our most coveted pieces, chosen for their exceptional quality and design',
+      viewAllFeatured: 'View All Featured',
+      summerCollection: 'Summer Collection',
+      shopNow: 'Shop Now',
+      topwear: 'Topwear',
+      ethnicWear: 'Ethnic Wear',
+      justLanded: 'Just Landed',
+      freshStyles: 'Fresh styles straight from our latest collection',
+      viewAllNewArrivals: 'View All New Arrivals',
+      complimentaryShipping: 'Complimentary Shipping',
+      complimentaryShippingText: 'Free shipping on all orders over ₹999',
+      easyReturns: 'Easy Returns',
+      easyReturnsText: '7 days free return',
+      securePayment: 'Secure Payment',
+      securePaymentText: '100% secure checkout experience',
+      premiumSupport: 'Premium Support',
+      premiumSupportText: 'Dedicated 24/7 customer care',
+      mostLoved: 'Most Loved',
+      bestSellers: 'Best Sellers',
+      bestSellersDescription: 'Our customers\' favorites, loved for their quality and style',
+      viewAllBestSellers: 'View All Best Sellers',
+      stayConnected: 'Stay Connected',
+      joinCircle: 'Join Our <span class="text-gold">Exclusive</span> Circle',
+      newsletterDescription: 'Subscribe to receive early access to new collections, exclusive offers, and style inspiration.',
+      subscribe: 'Subscribe',
+      privacyNote: 'By subscribing, you agree to our Privacy Policy'
+    };
+  });
+
+  constructor(private productService: ProductService, private languageService: LanguageService) {}
 
   ngOnInit(): void {
     // Load categories (filter out women and kids for men's only store)

@@ -200,6 +200,55 @@ import { OrderService, Order } from '@core/services/order.service';
   `,
   styles: [`
     .orders-page {
+    :host-context(body.vw-light-mode) .orders-page h2,
+    :host-context(body.vw-light-mode) .orders-page .subtitle,
+    :host-context(body.vw-light-mode) .orders-page .order-number,
+    :host-context(body.vw-light-mode) .orders-page .order-date,
+    :host-context(body.vw-light-mode) .orders-page .tracking-label,
+    :host-context(body.vw-light-mode) .orders-page .tracking-number,
+    :host-context(body.vw-light-mode) .orders-page .carrier,
+    :host-context(body.vw-light-mode) .orders-page .step-label,
+    :host-context(body.vw-light-mode) .orders-page .item-name,
+    :host-context(body.vw-light-mode) .orders-page .item-variant,
+    :host-context(body.vw-light-mode) .orders-page .item-qty,
+    :host-context(body.vw-light-mode) .orders-page .shipping-header,
+    :host-context(body.vw-light-mode) .orders-page .shipping-address span,
+    :host-context(body.vw-light-mode) .orders-page .summary-row,
+    :host-context(body.vw-light-mode) .orders-page .summary-total,
+    :host-context(body.vw-light-mode) .orders-page .empty-orders h3,
+    :host-context(body.vw-light-mode) .orders-page .empty-orders p,
+    :host-context(body.vw-light-mode) .orders-page .loading-state p {
+      color: #1f2937;
+    }
+
+    :host-context(body.vw-light-mode) .orders-page .order-card,
+    :host-context(body.vw-light-mode) .orders-page .empty-orders {
+      background: #ffffff;
+      border-color: rgba(17, 24, 39, 0.12);
+    }
+
+    :host-context(body.vw-light-mode) .orders-page .status-badge,
+    :host-context(body.vw-light-mode) .orders-page .payment-badge,
+    :host-context(body.vw-light-mode) .orders-page .btn-details,
+    :host-context(body.vw-light-mode) .orders-page .btn-cancel {
+      color: #1f2937;
+      background: #f9fafb;
+      border-color: rgba(17, 24, 39, 0.16);
+    }
+
+    :host-context(body.vw-light-mode) .orders-page .order-progress .progress-line,
+    :host-context(body.vw-light-mode) .orders-page .order-progress .step-icon {
+      background: rgba(17, 24, 39, 0.08);
+      border-color: rgba(17, 24, 39, 0.12);
+    }
+
+    :host-context(body.vw-light-mode) .orders-page .progress-step.active .step-icon,
+    :host-context(body.vw-light-mode) .orders-page .progress-step.completed .step-icon,
+    :host-context(body.vw-light-mode) .orders-page .order-actions .btn-details:hover,
+    :host-context(body.vw-light-mode) .orders-page .order-actions .btn-cancel:hover {
+      background: rgba(201, 169, 98, 0.16);
+      color: #111827;
+    }
       padding: 0;
     }
 

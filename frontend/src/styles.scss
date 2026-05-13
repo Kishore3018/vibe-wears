@@ -88,6 +88,64 @@ body {
   overflow-x: hidden;
 }
 
+body.vw-dark-mode {
+  --primary-color: #0a0a0f;
+  --secondary-color: #141419;
+  --text-primary: #f8f6f1;
+  --text-secondary: #b9c0cc;
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #141419;
+  --surface-card: #171821;
+  --surface-card-border: rgba(255, 255, 255, 0.12);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+body.vw-light-mode {
+  --primary-color: #1b1d23;
+  --secondary-color: #f4f1ea;
+  --text-primary: #1f2937;
+  --text-secondary: #4b5563;
+  --bg-primary: #f8f6f1;
+  --bg-secondary: #efebe2;
+  --surface-card: #ffffff;
+  --surface-card-border: rgba(17, 24, 39, 0.08);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+body.vw-light-mode .account-page {
+  background-color: #f4f1ea !important;
+}
+
+body.vw-light-mode .account-sidebar,
+body.vw-light-mode .account-content,
+body.vw-light-mode .settings-card {
+  background: #ffffff !important;
+  border-color: rgba(17, 24, 39, 0.12) !important;
+}
+
+body.vw-light-mode .settings-header h2,
+body.vw-light-mode .settings-header p,
+body.vw-light-mode .card-title h3,
+body.vw-light-mode .pref-field label,
+body.vw-light-mode .toggle-item span,
+body.vw-light-mode .payment-item p,
+body.vw-light-mode .payment-item strong {
+  color: #1f2937 !important;
+}
+
+body.vw-light-mode .pref-field input,
+body.vw-light-mode .pref-field select,
+body.vw-light-mode .actions-grid button,
+body.vw-light-mode .actions-grid a,
+body.vw-light-mode .toggle-item,
+body.vw-light-mode .upload-btn {
+  background: #f9fafb !important;
+  color: #1f2937 !important;
+  border-color: rgba(17, 24, 39, 0.16) !important;
+}
+
 // ============== Typography ==============
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Cormorant Garamond', serif;

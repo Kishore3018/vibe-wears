@@ -94,3 +94,40 @@ def send_google_login_success_email(to_email: str, first_name: str | None = None
         plain_text=plain_text,
         html_text=html_text,
     )
+
+
+def send_order_confirmation_email(
+    to_email: str,
+    order_number: str,
+    total_amount: float,
+    first_name: str | None = None,
+) -> None:
+    """Send order confirmation email using SMTP settings from environment variables."""
+    display_name = (first_name or "there").strip() or "there"
+    formatted_total = f"₹{total_amount:,.2f}"
+
+    plain_text = (
+        f"Hi {display_name},\n\n"
+        f"Thank you for your order! Your order #{order_number} for {formatted_total} has been placed successfully.\n"
+        "You can view your order details in your account.\n\n"
+        "Thanks for shopping at Vibe Wears!"
+    )
+
+    html_text = f"""
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #1a1a1a;">
+        <h2 style="margin-bottom: 8px;">Order Confirmation #{order_number}</h2>
+        <p>Hi {display_name},</p>
+        <p>Thank you for your order! Your order <strong>#{order_number}</strong> for <strong>{formatted_total}</strong> has been placed successfully.</p>
+        <p>You can view your order details in your account dashboard.</p>
+        <p style="margin-top: 24px;">Thanks for shopping at Vibe Wears!</p>
+      </body>
+    </html>
+    """
+
+    _send_email(
+        to_email=to_email,
+        subject=f"Vibe Wears Order Confirmation #{order_number}",
+        plain_text=plain_text,
+        html_text=html_text,
+    )

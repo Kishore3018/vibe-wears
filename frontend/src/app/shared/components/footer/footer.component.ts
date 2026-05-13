@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'app-footer',
@@ -16,7 +17,7 @@ import { FormsModule } from '@angular/forms';
             <!-- Brand Column -->
             <div class="footer-col brand-col">
               <h2 class="footer-logo">VIBE WEARS</h2>
-              <p class="brand-tagline">Crafting timeless elegance for the modern man. Premium men's fashion where quality meets style.</p>
+              <p class="brand-tagline">{{ labels().brandTagline }}</p>
               <p class="founder-credit">Founded by <span class="founder-name">Kiruthik</span></p>
               <div class="social-links">
                 <a href="https://facebook.com/vibewears" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
@@ -46,7 +47,7 @@ import { FormsModule } from '@angular/forms';
 
             <!-- Quick Links -->
             <div class="footer-col">
-              <h4>Shop</h4>
+              <h4>{{ labels().shop }}</h4>
               <ul>
                 <li><a routerLink="/products">All Products</a></li>
                 <li><a routerLink="/products" [queryParams]="{is_new_arrival: true}">New Arrivals</a></li>
@@ -57,7 +58,7 @@ import { FormsModule } from '@angular/forms';
 
             <!-- Customer Service -->
             <div class="footer-col">
-              <h4>Support</h4>
+              <h4>{{ labels().support }}</h4>
               <ul>
                 <li><a (click)="openModal('contact')" style="cursor: pointer;">Contact Us</a></li>
                 <li><a (click)="openModal('faqs')" style="cursor: pointer;">FAQs</a></li>
@@ -69,7 +70,7 @@ import { FormsModule } from '@angular/forms';
 
             <!-- Visit Our Store -->
             <div class="footer-col">
-              <h4>Contact Us</h4>
+              <h4>{{ labels().contactUs }}</h4>
               <div class="contact-info">
                 <a href="tel:+918524080713" class="contact-link">
                   <span class="material-icons contact-icon">phone</span>
@@ -98,8 +99,8 @@ import { FormsModule } from '@angular/forms';
 
             <!-- Newsletter -->
             <div class="footer-col newsletter-col">
-              <h4>Newsletter</h4>
-              <p>Join to receive exclusive offers and updates.</p>
+              <h4>{{ labels().newsletter }}</h4>
+              <p>{{ labels().newsletterText }}</p>
               <form class="newsletter-form" (submit)="onSubscribe($event)">
                 <input 
                   type="email" 
@@ -271,12 +272,12 @@ import { FormsModule } from '@angular/forms';
           <h2>Returns & Exchange</h2>
           <div class="info-section">
             <h3>Easy Returns</h3>
-            <p>We want you to love your purchase. If you're not completely satisfied, we offer hassle-free returns within 15 days of delivery.</p>
+            <p>We want you to love your purchase. If you're not completely satisfied, we offer hassle-free returns within 7 days of delivery.</p>
             
             <h3>Return Policy</h3>
             <ul>
               <li>Items must be unused with original tags attached</li>
-              <li>Return request must be raised within 15 days</li>
+              <li>Return request must be raised within 7 days</li>
               <li>Refund processed within 5-7 business days</li>
               <li>Free return pickup for prepaid orders</li>
             </ul>
@@ -969,15 +970,60 @@ export class FooterComponent {
   email = '';
   currentYear = new Date().getFullYear();
   activeModal: string | null = null;
+  labels = computed(() => {
+    const language = this.languageService.language();
+
+    if (language === 'Tamil') {
+      return {
+        brandTagline: 'நவீன ஆண்களுக்கான காலமற்ற நயத்தை உருவாக்குகிறோம். தரமும் பாணியும் இணையும் பிரீமியம் ஆடைகள்.',
+        shop: 'வாங்கவும்',
+        support: 'ஆதரவு',
+        contactUs: 'எங்களைத் தொடர்புகொள்ளவும்',
+        newsletter: 'செய்திமடல்',
+        newsletterText: 'சிறப்பு சலுகைகள் மற்றும் புதுப்பிப்புகளைப் பெற இணையுங்கள்.',
+        privacy: 'தனியுரிமை',
+        terms: 'விதிமுறைகள்',
+        cookies: 'குக்கீகள்'
+      };
+    }
+
+    if (language === 'Hindi') {
+      return {
+        brandTagline: 'आधुनिक पुरुषों के लिए शाश्वत एलिगेंस। गुणवत्ता और स्टाइल का प्रीमियम मेल।',
+        shop: 'शॉप',
+        support: 'सपोर्ट',
+        contactUs: 'संपर्क करें',
+        newsletter: 'न्यूज़लेटर',
+        newsletterText: 'एक्सक्लूसिव ऑफ़र और अपडेट पाने के लिए जुड़ें।',
+        privacy: 'प्राइवेसी',
+        terms: 'टर्म्स',
+        cookies: 'कुकीज़'
+      };
+    }
+
+    return {
+      brandTagline: 'Crafting timeless elegance for the modern man. Premium men\'s fashion where quality meets style.',
+      shop: 'Shop',
+      support: 'Support',
+      contactUs: 'Contact Us',
+      newsletter: 'Newsletter',
+      newsletterText: 'Join to receive exclusive offers and updates.',
+      privacy: 'Privacy',
+      terms: 'Terms',
+      cookies: 'Cookies'
+    };
+  });
 
   faqs = [
     { question: 'How do I track my order?', answer: 'Once your order is shipped, you will receive an email with tracking details. You can also track your order from the "Orders" section in your account.', open: false },
     { question: 'What payment methods do you accept?', answer: 'We accept all major credit/debit cards, UPI, net banking, and Cash on Delivery (COD). All payments are securely processed.', open: false },
     { question: 'How long does delivery take?', answer: 'Standard delivery takes 5-7 business days. Express delivery (2-3 days) and same-day delivery are available in select cities.', open: false },
     { question: 'Can I modify or cancel my order?', answer: 'Orders can be modified or cancelled within 24 hours of placing them. Contact our support team for assistance.', open: false },
-    { question: 'What is your return policy?', answer: 'We offer 15-day hassle-free returns. Items must be unused with original tags attached. Refunds are processed within 5-7 business days.', open: false },
+    { question: 'What is your return policy?', answer: 'We offer 7-day hassle-free returns. Items must be unused with original tags attached. Refunds are processed within 5-7 business days.', open: false },
     { question: 'How do I find my size?', answer: 'Refer to our Size Guide for detailed measurements. If you\'re between sizes, we recommend going for the larger size for a comfortable fit.', open: false }
   ];
+
+  constructor(private languageService: LanguageService) {}
 
   onSubscribe(event: Event): void {
     event.preventDefault();

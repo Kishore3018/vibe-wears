@@ -113,6 +113,15 @@ class ConnectionManager:
             "timestamp": datetime.utcnow().isoformat()
         }
         await self.send_personal_message(message, user_id)
+
+    async def notify_admin_new_order(self, order_data: dict):
+        """Broadcast new order notifications to admin clients"""
+        message = {
+            "type": "new_order_notification",
+            "data": order_data,
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        await self.broadcast_to_room(message, "admin")
     
     async def notify_stock_update(self, product_id: int, quantity: int):
         """Broadcast stock update to all clients"""

@@ -6,6 +6,7 @@ import { AuthService } from '@core/services/auth.service';
 import { CartService } from '@core/services/cart.service';
 import { WishlistService } from '@core/services/wishlist.service';
 import { ProductService, Category } from '@core/services/product.service';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'app-header',
@@ -16,10 +17,10 @@ import { ProductService, Category } from '@core/services/product.service';
     <div class="top-bar">
       <div class="container">
         <div class="top-bar-content">
-          <span>Free Shipping on orders over ₹999</span>
+          <span>{{ labels().topBar }}</span>
           <div class="top-bar-links">
-            <a routerLink="/track-order">Track Order</a>
-            <a routerLink="/help">Help</a>
+            <a routerLink="/track-order">{{ labels().trackOrder }}</a>
+            <a routerLink="/help">{{ labels().help }}</a>
           </div>
         </div>
       </div>
@@ -36,17 +37,17 @@ import { ProductService, Category } from '@core/services/product.service';
 
           <!-- Navigation -->
           <nav class="main-nav" [class.active]="mobileMenuOpen()">
-            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{ labels().home }}</a>
             <div class="nav-dropdown">
-              <a routerLink="/products" routerLinkActive="active">Shop</a>
+              <a routerLink="/products" routerLinkActive="active">{{ labels().shop }}</a>
               <div class="dropdown-menu">
                 @for (category of categories(); track category.id) {
                   <a [routerLink]="['/category', category.slug]">{{ category.name }}</a>
                 }
               </div>
             </div>
-            <a routerLink="/products" [queryParams]="{is_new_arrival: true}" routerLinkActive="active">New Arrivals</a>
-            <a routerLink="/products" [queryParams]="{is_featured: true}" routerLinkActive="active">Featured</a>
+            <a routerLink="/products" [queryParams]="{is_new_arrival: true}" routerLinkActive="active">{{ labels().newArrivals }}</a>
+            <a routerLink="/products" [queryParams]="{is_featured: true}" routerLinkActive="active">{{ labels().featured }}</a>
           </nav>
 
           <!-- Header Actions -->
@@ -55,7 +56,7 @@ import { ProductService, Category } from '@core/services/product.service';
             <div class="search-wrapper" [class.active]="searchOpen()">
               <input 
                 type="text" 
-                placeholder="Search products..." 
+                [placeholder]="labels().search" 
                 [(ngModel)]="searchQuery"
                 (keyup.enter)="onSearch()"
               >
@@ -72,18 +73,18 @@ import { ProductService, Category } from '@core/services/product.service';
                 </button>
                 <div class="dropdown-menu">
                   <div class="user-info">
-                    <span>Hello, {{ authService.fullName() }}</span>
+                    <span>{{ labels().hello }} {{ authService.fullName() }}</span>
                   </div>
                   @if (authService.isAdmin()) {
                     <a routerLink="/admin" class="admin-link">
                       <span class="material-icons">admin_panel_settings</span>
-                      Admin Panel
+                      {{ labels().admin }}
                     </a>
                   }
-                  <a routerLink="/account/profile">My Profile</a>
-                  <a routerLink="/account/orders">My Orders</a>
-                  <a routerLink="/account/wishlist">Wishlist</a>
-                  <a (click)="authService.logout()">Logout</a>
+                  <a routerLink="/account/profile">{{ labels().profile }}</a>
+                  <a routerLink="/account/orders">{{ labels().orders }}</a>
+                  <a routerLink="/account/wishlist">{{ labels().wishlist }}</a>
+                  <a (click)="authService.logout()">{{ labels().logout }}</a>
                 </div>
               </div>
             } @else {
@@ -549,13 +550,72 @@ export class HeaderComponent implements OnInit {
   isScrolled = signal(false);
   searchOpen = signal(false);
   mobileMenuOpen = signal(false);
+  labels = computed(() => {
+    const language = this.languageService.language();
+
+    if (language === 'Tamil') {
+      return {
+        topBar: '₹999 க்கு மேல் உள்ள ஆர்டர்களுக்கு இலவச ஷிப்பிங்',
+        trackOrder: 'ஆர்டரைத் தொடரவும்',
+        help: 'உதவி',
+        home: 'முகப்பு',
+        shop: 'கடை',
+        newArrivals: 'புதிய வருகைகள்',
+        featured: 'சிறப்பு தேர்வுகள்',
+        search: 'பொருட்களை தேடவும்...',
+        hello: 'வணக்கம்,',
+        admin: 'நிர்வாக குழு',
+        profile: 'என் சுயவிவரம்',
+        orders: 'என் ஆர்டர்கள்',
+        wishlist: 'விருப்பப் பட்டியல்',
+        logout: 'வெளியேறு'
+      };
+    }
+
+    if (language === 'Hindi') {
+      return {
+        topBar: '₹999 से अधिक ऑर्डर पर मुफ्त शिपिंग',
+        trackOrder: 'ऑर्डर ट्रैक करें',
+        help: 'सहायता',
+        home: 'होम',
+        shop: 'शॉप',
+        newArrivals: 'नई कलेक्शन',
+        featured: 'फीचर्ड',
+        search: 'प्रोडक्ट खोजें...',
+        hello: 'नमस्ते,',
+        admin: 'एडमिन पैनल',
+        profile: 'मेरी प्रोफाइल',
+        orders: 'मेरे ऑर्डर',
+        wishlist: 'विशलिस्ट',
+        logout: 'लॉगआउट'
+      };
+    }
+
+    return {
+      topBar: 'Free Shipping on orders over ₹999',
+      trackOrder: 'Track Order',
+      help: 'Help',
+      home: 'Home',
+      shop: 'Shop',
+      newArrivals: 'New Arrivals',
+      featured: 'Featured',
+      search: 'Search products...',
+      hello: 'Hello,',
+      admin: 'Admin Panel',
+      profile: 'My Profile',
+      orders: 'My Orders',
+      wishlist: 'Wishlist',
+      logout: 'Logout'
+    };
+  });
 
   constructor(
     public authService: AuthService,
     public cartService: CartService,
     public wishlistService: WishlistService,
     private productService: ProductService,
-    private router: Router
+    private router: Router,
+    private languageService: LanguageService
   ) {}
 
   ngOnInit(): void {

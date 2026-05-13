@@ -41,12 +41,12 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
               @for (item of cartItems(); track item.id) {
                 <div class="cart-item">
                   <div class="col-product">
-                    <a [routerLink]="['/product', item.product?.slug]" class="item-image">
-                      <img [src]="item.product?.primary_image || '/assets/images/placeholder.jpg'" [alt]="item.product?.name">
+                    <a [routerLink]="['/product', item.product.slug]" class="item-image">
+                      <img [src]="item.product.primary_image || '/assets/images/placeholder.jpg'" [alt]="item.product.name">
                     </a>
                     <div class="item-details">
-                      <a [routerLink]="['/product', item.product?.slug]" class="item-name">
-                        {{ item.product?.name }}
+                      <a [routerLink]="['/product', item.product.slug]" class="item-name">
+                        {{ item.product.name }}
                       </a>
                       @if (item.variant) {
                         <span class="item-variant">
@@ -92,8 +92,9 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
                   </div>
 
                   <div class="col-remove">
-                    <button class="remove-btn" (click)="removeItem(item)">
+                    <button class="remove-btn" (click)="removeItem(item)" type="button" aria-label="Remove product from cart" title="Remove item">
                       <span class="material-icons">close</span>
+                      <span class="remove-label">Remove</span>
                     </button>
                   </div>
                 </div>
@@ -165,7 +166,7 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
                 </div>
                 <div class="feature">
                   <span class="material-icons-outlined">replay</span>
-                  <span>30-day return policy</span>
+                  <span>7 days free return</span>
                 </div>
                 <div class="feature">
                   <span class="material-icons-outlined">lock</span>
@@ -282,7 +283,7 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
 
     .cart-header {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr 40px;
+      grid-template-columns: 2fr 1fr 1fr 1fr 92px;
       gap: 1rem;
       padding: 1.25rem 1.5rem;
       background: var(--surface-card-muted);
@@ -297,7 +298,7 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
 
     .cart-item {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr 40px;
+      grid-template-columns: 2fr 1fr 1fr 1fr 92px;
       gap: 1rem;
       padding: 1.5rem;
       border-bottom: 1px solid var(--surface-card-border);
@@ -439,29 +440,41 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
     }
 
     .remove-btn {
-      width: 36px;
+      min-width: 80px;
       height: 36px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: transparent;
+      border: 1px solid rgba(220, 38, 38, 0.28);
+      background: rgba(220, 38, 38, 0.08);
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: rgba(255, 255, 255, 0.4);
+      gap: 0.3rem;
+      color: #b91c1c;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.4px;
       transition: all 0.3s ease;
 
       &:hover {
-        background: rgba(239, 68, 68, 0.1);
-        border-color: rgba(239, 68, 68, 0.3);
-        color: #ef4444;
+        background: rgba(239, 68, 68, 0.14);
+        border-color: rgba(239, 68, 68, 0.45);
+        color: #dc2626;
       }
+
+      .material-icons {
+        font-size: 1rem;
+      }
+    }
+
+    .remove-label {
+      line-height: 1;
     }
 
     /* Coupon */
     .coupon-section {
       padding: 1.5rem;
       border-top: 1px solid var(--surface-card-border);
-      background: var(--surface-card-muted);
+      background: var(--surface-card);
     }
 
     .coupon-input {
@@ -471,15 +484,15 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
       input {
         flex: 1;
         padding: 0.875rem 1rem;
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid var(--surface-card-border);
         border-right: none;
-        background: rgba(255, 255, 255, 0.03);
-        color: var(--text-light);
+        background: var(--surface-card-muted);
+        color: var(--text-primary);
         font-family: 'Montserrat', sans-serif;
         font-size: 0.85rem;
 
         &::placeholder {
-          color: rgba(255, 255, 255, 0.4);
+          color: var(--text-secondary);
         }
 
         &:focus {
@@ -523,7 +536,7 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
       padding: 0.75rem 1rem;
       background: rgba(16, 185, 129, 0.1);
       border: 1px solid rgba(16, 185, 129, 0.2);
-      color: #10b981;
+      color: #0f7f57;
       font-size: 0.9rem;
 
       button {
@@ -717,6 +730,16 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
         position: absolute;
         top: 1rem;
         right: 1rem;
+
+        .remove-btn {
+          min-width: 36px;
+          width: 36px;
+          padding: 0;
+        }
+
+        .remove-label {
+          display: none;
+        }
       }
 
       .coupon-input {
@@ -724,7 +747,7 @@ import { CartService, CartItem, Cart } from '@core/services/cart.service';
         gap: 0.75rem;
 
         input {
-          border-right: 1px solid rgba(255, 255, 255, 0.15);
+          border-right: 1px solid var(--surface-card-border);
         }
       }
     }

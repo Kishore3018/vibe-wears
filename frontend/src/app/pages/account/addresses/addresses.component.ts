@@ -386,6 +386,50 @@ interface Address {
         padding: 1.5rem;
       }
     }
+
+    :host-context(body.vw-light-mode) .addresses-page h2,
+    :host-context(body.vw-light-mode) .addresses-page .subtitle,
+    :host-context(body.vw-light-mode) .addresses-page .empty-addresses h3,
+    :host-context(body.vw-light-mode) .addresses-page .empty-addresses p,
+    :host-context(body.vw-light-mode) .addresses-page .form-card h3,
+    :host-context(body.vw-light-mode) .addresses-page .address-card h4,
+    :host-context(body.vw-light-mode) .addresses-page .address-card p,
+    :host-context(body.vw-light-mode) .addresses-page .form-group label,
+    :host-context(body.vw-light-mode) .addresses-page .checkbox-label span {
+      color: #1f2937;
+    }
+
+    :host-context(body.vw-light-mode) .addresses-page .address-card,
+    :host-context(body.vw-light-mode) .addresses-page .form-card,
+    :host-context(body.vw-light-mode) .addresses-page .empty-addresses {
+      background-color: #ffffff;
+      border-color: rgba(17, 24, 39, 0.12);
+    }
+
+    :host-context(body.vw-light-mode) .addresses-page .form-group input,
+    :host-context(body.vw-light-mode) .addresses-page .form-group select {
+      background-color: #ffffff;
+      color: #111827;
+      border-color: rgba(17, 24, 39, 0.18);
+    }
+
+    :host-context(body.vw-light-mode) .addresses-page .action-btn,
+    :host-context(body.vw-light-mode) .addresses-page .page-header .btn,
+    :host-context(body.vw-light-mode) .addresses-page .form-actions .btn-outline,
+    :host-context(body.vw-light-mode) .addresses-page .form-actions .btn-primary {
+      background: #f9fafb;
+      color: #1f2937;
+      border-color: rgba(17, 24, 39, 0.16);
+    }
+
+    :host-context(body.vw-light-mode) .addresses-page .address-form-modal {
+      background-color: rgba(17, 24, 39, 0.45);
+    }
+
+    :host-context(body.vw-light-mode) .addresses-page .default-badge {
+      background: rgba(201, 169, 98, 0.18);
+      color: #7c5f1d;
+    }
   `]
 })
 export class AddressesComponent implements OnInit {

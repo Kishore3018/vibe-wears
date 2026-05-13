@@ -13,6 +13,8 @@ from models.models import (
 )
 from schemas.schemas import OrderCreate, OrderResponse, OrderStatusUpdate, OrderStatusEnum
 from utils.auth import get_current_user, get_current_admin_user
+from websocket.manager import manager
+from utils.email import send_order_confirmation_email
 
 router = APIRouter(prefix="/api/orders", tags=["Orders"])
 
@@ -272,6 +274,35 @@ async def create_order(
     order = db.query(Order).filter(Order.id == order.id).options(
         joinedload(Order.items)
     ).first()
+
+    # Push instant notification to admin dashboard/mobile clients.
+    try:
+        customer_name = f"{current_user.first_name or ''} {current_user.last_name or ''}".strip() or current_user.email
+        await manager.notify_admin_new_order({
+            "order_id": order.id,
+            "order_number": order.order_number,
+            "customer_name": customer_name,
+            "total_amount": float(order.total_amount),
+            "items_count": sum(item.quantity for item in order.items),
+            "payment_method": order.payment_method,
+            "created_at": order.created_at.isoformat() if order.created_at else datetime.utcnow().isoformat()
+        })
+    except Exception as exc:
+        print(f"Failed to send admin order notification for order {order.id}: {exc}")
+    
+    # Send order confirmation email
+    try:
+        await send_order_confirmation_email(
+            order.user.email,
+            order.order_number,
+            order.total_amount,
+            order.items,
+            order.shipping_address,
+            order.billing_address,
+            order.customer_notes
+        )
+    except Exception as exc:
+        print(f"Failed to send order confirmation email for order {order.id}: {exc}")
     
     return OrderResponse.model_validate(order)
 

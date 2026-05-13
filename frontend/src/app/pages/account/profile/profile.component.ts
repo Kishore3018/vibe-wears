@@ -87,6 +87,20 @@ import { AuthService, User } from '@core/services/auth.service';
 
       <h3>Change Password</h3>
       <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
+        @if (passwordSuccessMessage()) {
+          <div class="alert alert-success">
+            <span class="material-icons">check_circle</span>
+            {{ passwordSuccessMessage() }}
+          </div>
+        }
+
+        @if (passwordErrorMessage()) {
+          <div class="alert alert-error">
+            <span class="material-icons">error</span>
+            {{ passwordErrorMessage() }}
+          </div>
+        }
+
         <div class="form-group">
           <label for="currentPassword">Current Password</label>
           <input 
@@ -248,6 +262,61 @@ import { AuthService, User } from '@core/services/auth.service';
         grid-template-columns: 1fr;
       }
     }
+
+    :host-context(body.vw-light-mode) .profile-page h2,
+    :host-context(body.vw-light-mode) .profile-page h3,
+    :host-context(body.vw-light-mode) .profile-page .subtitle,
+    :host-context(body.vw-light-mode) .profile-page .form-group label {
+      color: #1f2937;
+    }
+
+    :host-context(body.vw-light-mode) .profile-page .form-group input {
+      background-color: #ffffff;
+      color: #111827;
+      border-color: rgba(17, 24, 39, 0.18);
+    }
+
+    :host-context(body.vw-light-mode) .profile-page .form-group input::placeholder {
+      color: rgba(17, 24, 39, 0.45);
+    }
+
+    :host-context(body.vw-light-mode) .profile-page .divider {
+      border-top-color: rgba(17, 24, 39, 0.12);
+    }
+
+    :host-context(body.vw-light-mode) .profile-page .alert-success {
+      background-color: rgba(16, 185, 129, 0.14);
+      color: #065f46;
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    :host-context(body.vw-light-mode) .profile-page .alert-error {
+      background-color: rgba(239, 68, 68, 0.14);
+      color: #991b1b;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    :host-context(body.vw-light-mode) .profile-page .spinner {
+      border-color: rgba(17, 24, 39, 0.18);
+      border-top-color: #1f2937;
+    }
+
+    :host-context(body.vw-light-mode) .profile-page .btn-outline {
+      color: #1f2937;
+      border-color: rgba(17, 24, 39, 0.18);
+      background-color: #ffffff;
+    }
+
+    :host-context(body.vw-light-mode) .profile-page .btn-primary {
+      color: #ffffff;
+      background-color: #1f2937;
+      border-color: #1f2937;
+    }
+
+    :host-context(body.vw-light-mode) .profile-page .btn-primary:hover:not(:disabled) {
+      background-color: #a68b4b;
+      border-color: #a68b4b;
+    }
   `]
 })
 export class ProfileComponent implements OnInit {
@@ -257,6 +326,8 @@ export class ProfileComponent implements OnInit {
   passwordLoading = signal(false);
   successMessage = signal('');
   errorMessage = signal('');
+  passwordSuccessMessage = signal('');
+  passwordErrorMessage = signal('');
 
   constructor(
     private fb: FormBuilder,
@@ -307,19 +378,27 @@ export class ProfileComponent implements OnInit {
 
     const { newPassword, confirmPassword } = this.passwordForm.value;
     if (newPassword !== confirmPassword) {
-      this.errorMessage.set('Passwords do not match');
+      this.passwordErrorMessage.set('Passwords do not match');
       return;
     }
 
     this.passwordLoading.set(true);
-    this.successMessage.set('');
-    this.errorMessage.set('');
+    this.passwordSuccessMessage.set('');
+    this.passwordErrorMessage.set('');
 
-    // Simulate API call
-    setTimeout(() => {
-      this.passwordLoading.set(false);
-      this.successMessage.set('Password updated successfully!');
-      this.passwordForm.reset();
-    }, 1500);
+    this.authService.changePassword(
+      this.passwordForm.value.currentPassword || '',
+      newPassword || ''
+    ).subscribe({
+      next: () => {
+        this.passwordLoading.set(false);
+        this.passwordSuccessMessage.set('Password updated successfully!');
+        this.passwordForm.reset();
+      },
+      error: (err) => {
+        this.passwordLoading.set(false);
+        this.passwordErrorMessage.set(err?.error?.detail || 'Unable to update password');
+      }
+    });
   }
 }

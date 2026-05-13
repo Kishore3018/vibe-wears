@@ -23,10 +23,17 @@ router = APIRouter(prefix="/api/payments", tags=["Payments"])
 # Razorpay configuration
 RAZORPAY_KEY_ID = (os.getenv("RAZORPAY_KEY_ID") or "").strip()
 RAZORPAY_KEY_SECRET = (os.getenv("RAZORPAY_KEY_SECRET") or "").strip()
+PAYMENT_DEMO_MODE = (os.getenv("PAYMENT_DEMO_MODE") or "").strip().lower()
 
 
 def _is_demo_mode() -> bool:
-    """Treat missing/placeholder credentials as demo mode to keep checkout functional in dev."""
+    """Resolve payment mode from env, falling back to safe dev-friendly defaults."""
+    if PAYMENT_DEMO_MODE in {"1", "true", "yes", "on"}:
+        return True
+    if PAYMENT_DEMO_MODE in {"0", "false", "no", "off"}:
+        return False
+
+    # Backward-compatible fallback for existing setups.
     if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
         return True
     if RAZORPAY_KEY_ID == "rzp_test_demo" or RAZORPAY_KEY_SECRET == "demo_secret":
@@ -45,6 +52,30 @@ try:
 except ImportError:
     RAZORPAY_AVAILABLE = False
     razorpay_client = None
+
+
+def _ensure_live_mode_is_ready() -> None:
+    """Fail fast when live mode is requested but credentials/SDK are not valid."""
+    if _is_demo_mode():
+        return
+
+    if not RAZORPAY_KEY_ID or not RAZORPAY_KEY_SECRET:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Razorpay is in live mode but credentials are missing"
+        )
+
+    if RAZORPAY_KEY_ID == "rzp_test_demo" or RAZORPAY_KEY_SECRET == "demo_secret":
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Razorpay is in live mode but demo credentials are configured"
+        )
+
+    if not RAZORPAY_AVAILABLE or not razorpay_client:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Razorpay SDK is unavailable. Install dependencies in backend/requirements.txt"
+        )
 
 
 # ============== Schemas ==============
@@ -124,6 +155,8 @@ async def create_payment_order(
     
     # Convert amount to paise (Razorpay uses smallest currency unit)
     amount_in_paise = int(order.total_amount * 100)
+
+    _ensure_live_mode_is_ready()
     
     if RAZORPAY_AVAILABLE and not _is_demo_mode() and razorpay_client:
         # Create Razorpay order
@@ -183,6 +216,8 @@ async def verify_payment(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Order not found"
         )
+
+    _ensure_live_mode_is_ready()
     
     # Demo mode - always succeed
     if _is_demo_mode() or request.razorpay_order_id.startswith("order_demo_"):
@@ -401,5 +436,6 @@ async def get_payment_config():
     """Get Razorpay public configuration"""
     return {
         "razorpay_key_id": _public_key_id(),
-        "demo_mode": _is_demo_mode()
+        "demo_mode": _is_demo_mode(),
+        "live_mode_ready": RAZORPAY_AVAILABLE and bool(razorpay_client)
     }

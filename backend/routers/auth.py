@@ -52,6 +52,11 @@ class GoogleTokenAuthRequest(BaseModel):
     sub: str  # Google user ID
 
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
+
 def generate_otp(length: int = 6) -> str:
     """Generate a random numeric OTP"""
     return ''.join(random.choices(string.digits, k=length))
@@ -244,20 +249,20 @@ async def update_current_user(
 
 @router.post("/change-password")
 async def change_password(
-    current_password: str,
-    new_password: str,
+    data: ChangePasswordRequest,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Change user password"""
-    if not verify_password(current_password, current_user.hashed_password):
+    if not verify_password(data.current_password, current_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Current password is incorrect"
         )
     
-    current_user.hashed_password = get_password_hash(new_password)
+    current_user.hashed_password = get_password_hash(data.new_password)
     db.commit()
+    db.refresh(current_user)
     
     return {"message": "Password changed successfully"}
 

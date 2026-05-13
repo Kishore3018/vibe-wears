@@ -205,6 +205,39 @@ import { AuthService } from '@core/services/auth.service';
       }
     }
 
+    :host-context(body.vw-light-mode) .wishlist-page h2,
+    :host-context(body.vw-light-mode) .wishlist-page .subtitle,
+    :host-context(body.vw-light-mode) .wishlist-page .product-name,
+    :host-context(body.vw-light-mode) .wishlist-page .product-price span,
+    :host-context(body.vw-light-mode) .wishlist-page .brand-name,
+    :host-context(body.vw-light-mode) .wishlist-page .empty-wishlist h3,
+    :host-context(body.vw-light-mode) .wishlist-page .empty-wishlist p {
+      color: #1f2937;
+    }
+
+    :host-context(body.vw-light-mode) .wishlist-page .wishlist-card,
+    :host-context(body.vw-light-mode) .wishlist-page .empty-wishlist {
+      background-color: #ffffff;
+      border-color: rgba(17, 24, 39, 0.12);
+    }
+
+    :host-context(body.vw-light-mode) .wishlist-page .remove-btn,
+    :host-context(body.vw-light-mode) .wishlist-page .wishlist-actions .btn-outline,
+    :host-context(body.vw-light-mode) .wishlist-page .wishlist-card .btn-primary {
+      background-color: #f9fafb;
+      color: #1f2937;
+      border-color: rgba(17, 24, 39, 0.16);
+    }
+
+    :host-context(body.vw-light-mode) .wishlist-page .wishlist-actions {
+      border-top-color: rgba(17, 24, 39, 0.12);
+    }
+
+    :host-context(body.vw-light-mode) .wishlist-page .out-of-stock-overlay {
+      background-color: rgba(17, 24, 39, 0.58);
+      color: #ffffff;
+    }
+
     .product-price {
       display: flex;
       align-items: center;

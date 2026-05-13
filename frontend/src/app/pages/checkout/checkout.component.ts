@@ -245,7 +245,7 @@ import { of, interval, Subscription } from 'rxjs';
                     <span class="material-icons">verified_user</span>
                     <span>Your payment information is secure & encrypted</span>
                     <div class="security-logos">
-                      <img src="https://cdn.razorpay.com/static/assets/logo/payment/pci.svg" alt="PCI DSS" height="20">
+                      <span class="security-chip">PCI DSS</span>
                     </div>
                   </div>
 
@@ -630,7 +630,7 @@ import { of, interval, Subscription } from 'rxjs';
                       <div class="selected-payment-display">
                         @switch (selectedPaymentType()) {
                           @case ('upi') {
-                            <img src="https://cdn.razorpay.com/static/assets/logo/payment/upi.svg" alt="UPI" height="24">
+                            <span class="payment-chip">UPI</span>
                             <div>
                               <span class="payment-name">UPI</span>
                               @if (upiMethod() === 'qr') {
@@ -680,9 +680,9 @@ import { of, interval, Subscription } from 'rxjs';
                     <h3>Order Items ({{ cartItems().length }})</h3>
                     @for (item of cartItems(); track item.id) {
                       <div class="order-item">
-                        <img [src]="item.product?.primary_image || '/assets/images/placeholder.jpg'" [alt]="item.product?.name">
+                        <img [src]="item.product.primary_image || '/assets/images/placeholder.jpg'" [alt]="item.product.name">
                         <div class="item-info">
-                          <span class="item-name">{{ item.product?.name }}</span>
+                          <span class="item-name">{{ item.product.name }}</span>
                           <span class="item-meta">
                             Qty: {{ item.quantity }}
                           </span>
@@ -758,11 +758,11 @@ import { of, interval, Subscription } from 'rxjs';
                 @for (item of cartItems(); track item.id) {
                   <div class="summary-item">
                     <div class="item-image">
-                      <img [src]="item.product?.primary_image || '/assets/images/placeholder.jpg'" [alt]="item.product?.name">
+                      <img [src]="item.product.primary_image || '/assets/images/placeholder.jpg'" [alt]="item.product.name">
                       <span class="item-qty">{{ item.quantity }}</span>
                     </div>
                     <div class="item-details">
-                      <span class="item-name">{{ item.product?.name }}</span>
+                      <span class="item-name">{{ item.product.name }}</span>
                       <span class="item-price">{{ getItemTotal(item) | currency:'INR':'symbol':'1.0-0' }}</span>
                     </div>
                   </div>
@@ -970,6 +970,7 @@ import { of, interval, Subscription } from 'rxjs';
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.08);
       padding: 2rem;
+      color: var(--text-light);
 
       h2 {
         font-family: 'Cormorant Garamond', serif;
@@ -998,7 +999,7 @@ import { of, interval, Subscription } from 'rxjs';
         font-weight: 500;
         font-size: 0.8rem;
         letter-spacing: 0.5px;
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.9);
       }
 
       input, select {
@@ -1029,7 +1030,7 @@ import { of, interval, Subscription } from 'rxjs';
       gap: 0.5rem;
       margin-top: 1rem;
       cursor: pointer;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.9);
 
       input[type="checkbox"] {
         width: 16px;
@@ -1038,7 +1039,7 @@ import { of, interval, Subscription } from 'rxjs';
       }
 
       span {
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.9);
       }
     }
 
@@ -1048,6 +1049,29 @@ import { of, interval, Subscription } from 'rxjs';
       margin-top: 2rem;
       padding-top: 1.5rem;
       border-top: 1px solid var(--border-color);
+
+      .btn-outline {
+        background: var(--accent-color);
+        color: var(--primary-color);
+        border: 1px solid var(--accent-color);
+
+        &:hover:not(:disabled) {
+          background: transparent;
+          color: var(--accent-color);
+        }
+      }
+
+      .btn-primary {
+        background: var(--primary-color);
+        color: var(--text-light);
+        border: 1px solid var(--primary-color);
+
+        &:hover:not(:disabled) {
+          background: var(--accent-color);
+          border-color: var(--accent-color);
+          color: var(--primary-color);
+        }
+      }
     }
 
     /* Payment Methods */
@@ -1200,12 +1224,12 @@ import { of, interval, Subscription } from 'rxjs';
 
         .material-icons {
           font-size: 2rem;
-          color: rgba(255, 255, 255, 0.4);
+          color: rgba(255, 255, 255, 0.7);
           margin-bottom: 0.5rem;
         }
 
         span {
-          color: rgba(255, 255, 255, 0.6);
+          color: rgba(255, 255, 255, 0.85);
           font-size: 0.9rem;
         }
       }
@@ -1222,7 +1246,7 @@ import { of, interval, Subscription } from 'rxjs';
 
       .address-name {
         font-weight: 600;
-        color: var(--text-light);
+        color: rgba(255, 255, 255, 0.95);
         display: block;
         margin-bottom: 0.5rem;
       }
@@ -1241,7 +1265,7 @@ import { of, interval, Subscription } from 'rxjs';
 
       .address-details {
         font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(255, 255, 255, 0.82);
         line-height: 1.6;
       }
     }
@@ -1278,6 +1302,23 @@ import { of, interval, Subscription } from 'rxjs';
       .security-logos {
         display: flex;
         gap: 0.5rem;
+
+        .security-chip {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 24px;
+          padding: 0.2rem 0.55rem;
+          border: 1px solid rgba(16, 185, 129, 0.45);
+          background: rgba(16, 185, 129, 0.18);
+          color: #d1fae5;
+          border-radius: 4px;
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+          white-space: nowrap;
+        }
       }
     }
 
@@ -1339,7 +1380,7 @@ import { of, interval, Subscription } from 'rxjs';
 
       .method-title {
         font-weight: 600;
-        color: var(--text-light);
+        color: rgba(255, 255, 255, 0.95);
         font-size: 1rem;
       }
 
@@ -1359,7 +1400,7 @@ import { of, interval, Subscription } from 'rxjs';
       .method-subtitle {
         display: block;
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(255, 255, 255, 0.8);
         margin-top: 0.25rem;
       }
     }
@@ -1418,12 +1459,12 @@ import { of, interval, Subscription } from 'rxjs';
           padding: 0.25rem 0.5rem;
           background: rgba(255, 255, 255, 0.1);
           border-radius: 3px;
-          color: rgba(255, 255, 255, 0.8);
+          color: rgba(255, 255, 255, 0.95);
         }
 
         .more-banks {
           font-size: 0.7rem;
-          color: rgba(255, 255, 255, 0.5);
+          color: rgba(255, 255, 255, 0.85);
         }
       }
     }
@@ -1481,7 +1522,7 @@ import { of, interval, Subscription } from 'rxjs';
 
       .option-label {
         font-size: 0.9rem;
-        color: var(--text-light);
+        color: rgba(255, 255, 255, 0.95);
       }
     }
 
@@ -1513,7 +1554,7 @@ import { of, interval, Subscription } from 'rxjs';
       .form-hint {
         display: block;
         font-size: 0.75rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(255, 255, 255, 0.75);
         margin-top: 0.5rem;
       }
 
@@ -2062,13 +2103,29 @@ import { of, interval, Subscription } from 'rxjs';
       .payment-name {
         display: block;
         font-weight: 600;
-        color: var(--text-light);
+        color: var(--text-primary);
+      }
+
+      .payment-chip {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 42px;
+        height: 24px;
+        padding: 0 0.5rem;
+        border-radius: 4px;
+        border: 1px solid rgba(201, 169, 98, 0.55);
+        background: rgba(201, 169, 98, 0.14);
+        color: #f3d99c;
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
       }
 
       .payment-detail {
         display: block;
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: var(--text-secondary);
         margin-top: 0.25rem;
 
         &.emi-detail {
@@ -2087,7 +2144,7 @@ import { of, interval, Subscription } from 'rxjs';
         font-size: 0.9rem;
         font-weight: 600;
         margin-bottom: 1rem;
-        color: var(--text-light);
+        color: var(--text-primary);
       }
     }
 
@@ -2096,7 +2153,7 @@ import { of, interval, Subscription } from 'rxjs';
       align-items: center;
       gap: 1rem;
       padding: 1rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid var(--surface-card-border);
 
       &:last-child {
         border-bottom: none;
@@ -2118,12 +2175,12 @@ import { of, interval, Subscription } from 'rxjs';
       .item-name {
         font-family: 'Montserrat', sans-serif;
         font-weight: 500;
-        color: var(--text-light);
+        color: var(--text-primary);
       }
 
       .item-meta {
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--text-secondary);
         margin-top: 0.25rem;
       }
 
@@ -2144,7 +2201,7 @@ import { of, interval, Subscription } from 'rxjs';
 
       p {
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: var(--text-secondary);
 
         a {
           color: var(--accent-color);

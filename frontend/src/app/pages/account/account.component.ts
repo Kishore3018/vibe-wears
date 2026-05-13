@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, HostListener, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService, User } from '@core/services/auth.service';
@@ -26,27 +26,27 @@ import { AuthService, User } from '@core/services/auth.service';
             <nav class="account-nav">
               <a routerLink="/account/profile" routerLinkActive="active">
                 <span class="material-icons-outlined">person</span>
-                Profile
+                {{ t('profile') }}
               </a>
               <a routerLink="/account/orders" routerLinkActive="active">
                 <span class="material-icons-outlined">inventory_2</span>
-                Orders
+                {{ t('orders') }}
               </a>
               <a routerLink="/account/addresses" routerLinkActive="active">
                 <span class="material-icons-outlined">location_on</span>
-                Addresses
+                {{ t('addresses') }}
               </a>
               <a routerLink="/account/wishlist" routerLinkActive="active">
                 <span class="material-icons-outlined">favorite</span>
-                Wishlist
+                {{ t('wishlist') }}
               </a>
               <a routerLink="/account/settings" routerLinkActive="active">
                 <span class="material-icons-outlined">settings</span>
-                Settings
+                {{ t('settings') }}
               </a>
               <button class="logout-btn" (click)="logout()">
                 <span class="material-icons-outlined">logout</span>
-                Logout
+                {{ t('logout') }}
               </button>
             </nav>
           </aside>
@@ -231,15 +231,89 @@ import { AuthService, User } from '@core/services/auth.service';
         }
       }
     }
+
+    :host-context(body.vw-light-mode) .account-page {
+      background-color: #f4f1ea;
+    }
+
+    :host-context(body.vw-light-mode) .account-sidebar,
+    :host-context(body.vw-light-mode) .account-content {
+      background: #ffffff;
+      border-color: rgba(17, 24, 39, 0.12);
+    }
+
+    :host-context(body.vw-light-mode) .account-nav a,
+    :host-context(body.vw-light-mode) .account-nav button {
+      color: #374151;
+    }
+
+    :host-context(body.vw-light-mode) .account-nav a:hover,
+    :host-context(body.vw-light-mode) .account-nav button:hover {
+      color: #111827;
+      background: rgba(17, 24, 39, 0.06);
+    }
+
+    :host-context(body.vw-light-mode) .account-nav a.active {
+      color: #a68b4b;
+      background: rgba(201, 169, 98, 0.16);
+      border-left-color: #c9a962;
+    }
   `]
 })
 export class AccountComponent implements OnInit {
   user = signal<User | null>(null);
+  language = signal('English');
+
+  private translations: Record<string, Record<string, string>> = {
+    English: {
+      profile: 'Profile',
+      orders: 'Orders',
+      addresses: 'Addresses',
+      wishlist: 'Wishlist',
+      settings: 'Settings',
+      logout: 'Logout'
+    },
+    Tamil: {
+      profile: 'சுயவிவரம்',
+      orders: 'ஆர்டர்கள்',
+      addresses: 'முகவரிகள்',
+      wishlist: 'விருப்ப பட்டியல்',
+      settings: 'அமைப்புகள்',
+      logout: 'வெளியேறு'
+    },
+    Hindi: {
+      profile: 'प्रोफाइल',
+      orders: 'ऑर्डर',
+      addresses: 'पते',
+      wishlist: 'विशलिस्ट',
+      settings: 'सेटिंग्स',
+      logout: 'लॉगआउट'
+    }
+  };
 
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     this.user.set(this.authService.user());
+    const raw = localStorage.getItem('vw_account_settings');
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        this.language.set(parsed.language || 'English');
+      } catch {
+        this.language.set('English');
+      }
+    }
+  }
+
+  @HostListener('window:vw-language-changed', ['$event'])
+  onLanguageChanged(event: CustomEvent<{ language: string }>): void {
+    this.language.set(event.detail?.language || 'English');
+  }
+
+  t(key: string): string {
+    const lang = this.language();
+    return this.translations[lang]?.[key] || this.translations['English'][key] || key;
   }
 
   getInitials(): string {

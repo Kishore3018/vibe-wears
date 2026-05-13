@@ -170,7 +170,7 @@ import { ProductCardComponent } from '@shared/components/product-card/product-ca
                 </div>
                 <div class="feature">
                   <span class="material-icons-outlined">replay</span>
-                  <span>30-day returns</span>
+                  <span>7 days free return</span>
                 </div>
                 <div class="feature">
                   <span class="material-icons-outlined">verified_user</span>

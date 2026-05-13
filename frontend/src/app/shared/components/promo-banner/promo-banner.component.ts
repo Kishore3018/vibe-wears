@@ -371,7 +371,7 @@ export class PromoBannerComponent implements OnInit, OnDestroy {
     },
     {
       id: 4,
-      text: '🔄 Easy 30-day returns',
+      text: '🔄 Easy 7 days free return',
       highlight: 'No questions asked',
       link: '/help',
       linkText: 'Learn More'

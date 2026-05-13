@@ -1,9 +1,21 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed } from '@angular/core';
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminService, DashboardStats, RevenueData, TopProduct, RecentOrder } from '../../../core/services/admin.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { forkJoin } from 'rxjs';
+import { environment } from '@env/environment';
+import { showToast } from '../../../shared/components/toast/toast.component';
+
+interface AdminOrderNotification {
+  order_id: number;
+  order_number: string;
+  customer_name: string;
+  total_amount: number;
+  items_count: number;
+  payment_method: string;
+  created_at: string;
+}
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -31,6 +43,43 @@ import { forkJoin } from 'rxjs';
             <div class="shape shape-3"></div>
           </div>
         </div>
+      </section>
+
+      <section class="live-orders-panel">
+        <div class="live-orders-header">
+          <h2>
+            <span class="material-icons">notifications_active</span>
+            Live Order Alerts
+          </h2>
+          <div class="live-orders-actions">
+            <span class="badge">{{ unreadNotifications() }} new</span>
+            <button type="button" class="clear-btn" (click)="clearNotifications()">Clear</button>
+          </div>
+        </div>
+
+        @if (adminNotifications().length === 0) {
+          <div class="live-orders-empty">
+            <span class="material-icons">notifications_none</span>
+            <p>New order alerts will appear here instantly.</p>
+          </div>
+        }
+
+        @for (notification of adminNotifications(); track notification.order_number + '-' + notification.created_at) {
+          <div class="live-order-item">
+            <div class="pulse-dot"></div>
+            <div class="live-order-content">
+              <p>
+                <strong>#{{ notification.order_number }}</strong>
+                placed by <strong>{{ notification.customer_name }}</strong>
+              </p>
+              <div class="meta-row">
+                <span>{{ notification.items_count }} item(s)</span>
+                <span>{{ notification.total_amount | currency:'INR':'symbol':'1.0-0' }}</span>
+                <span>{{ notification.created_at | date:'shortTime' }}</span>
+              </div>
+            </div>
+          </div>
+        }
       </section>
 
       <!-- Quick Actions -->
@@ -628,6 +677,123 @@ import { forkJoin } from 'rxjs';
     @keyframes float {
       0%, 100% { transform: translateY(0) rotate(0deg); }
       50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    .live-orders-panel {
+      background: linear-gradient(135deg, #152238 0%, #0f172a 100%);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      border-radius: 18px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.28);
+    }
+
+    .live-orders-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.9rem;
+
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0;
+        font-size: 1rem;
+        color: #e2e8f0;
+      }
+
+      .material-icons {
+        color: #f59e0b;
+      }
+    }
+
+    .live-orders-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .badge {
+      background: rgba(245, 158, 11, 0.18);
+      color: #fbbf24;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.28rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .clear-btn {
+      background: rgba(148, 163, 184, 0.14);
+      color: #e2e8f0;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 8px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(148, 163, 184, 0.22);
+      }
+    }
+
+    .live-orders-empty {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(226, 232, 240, 0.8);
+      font-size: 0.9rem;
+      min-height: 2.5rem;
+    }
+
+    .live-order-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0.1rem;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+    }
+
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 0.45rem;
+      background: #22c55e;
+      box-shadow: 0 0 0 rgba(34, 197, 94, 0.7);
+      animation: pulse-ring 1.8s infinite;
+      flex-shrink: 0;
+    }
+
+    .live-order-content {
+      p {
+        margin: 0;
+        color: #f8fafc;
+      }
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      margin-top: 0.3rem;
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+      }
     }
 
     /* Quick Actions */
@@ -1830,9 +1996,17 @@ import { forkJoin } from 'rxjs';
     }
   `]
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit, OnDestroy {
   private adminService = inject(AdminService);
   authService = inject(AuthService);
+
+  adminNotifications = signal<AdminOrderNotification[]>([]);
+  unreadNotifications = signal(0);
+
+  private adminSocket: WebSocket | null = null;
+  private shouldReconnectAdminSocket = true;
+  private reconnectAttempts = 0;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
   stats = signal<DashboardStats | null>(null);
   revenueData = signal<RevenueData[]>([]);
@@ -1855,6 +2029,23 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboardData();
+    this.requestBrowserNotificationPermission();
+    this.connectAdminNotificationSocket();
+  }
+
+  ngOnDestroy(): void {
+    this.shouldReconnectAdminSocket = false;
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    this.adminSocket?.close();
+    this.adminSocket = null;
+  }
+
+  clearNotifications(): void {
+    this.adminNotifications.set([]);
+    this.unreadNotifications.set(0);
   }
 
   getGreeting(): string {
@@ -1956,5 +2147,99 @@ export class AdminDashboardComponent implements OnInit {
       return (parts[0][0] + parts[1][0]).toUpperCase();
     }
     return name.slice(0, 2).toUpperCase();
+  }
+
+  private connectAdminNotificationSocket(): void {
+    const token = localStorage.getItem('access_token');
+    if (!token) return;
+
+    const adminUrl = this.getAdminSocketUrl(token);
+    this.adminSocket = new WebSocket(adminUrl);
+
+    this.adminSocket.onopen = () => {
+      this.reconnectAttempts = 0;
+    };
+
+    this.adminSocket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        if (message?.type === 'new_order_notification' && message?.data) {
+          this.handleIncomingOrderNotification(message.data as AdminOrderNotification);
+        }
+      } catch (error) {
+        console.error('Failed to parse admin socket message:', error);
+      }
+    };
+
+    this.adminSocket.onclose = (event) => {
+      this.adminSocket = null;
+
+      if (!this.shouldReconnectAdminSocket) {
+        return;
+      }
+
+      if (event.code === 4001 || event.code === 4003) {
+        return;
+      }
+
+      const retryDelay = Math.min(3000 * Math.pow(2, this.reconnectAttempts), 30000);
+      this.reconnectAttempts += 1;
+      this.reconnectTimer = setTimeout(() => this.connectAdminNotificationSocket(), retryDelay);
+    };
+
+    this.adminSocket.onerror = (error) => {
+      console.error('Admin socket connection error:', error);
+    };
+  }
+
+  private getAdminSocketUrl(token: string): string {
+    const base = environment.wsUrl.endsWith('/ws')
+      ? environment.wsUrl.slice(0, -3)
+      : environment.wsUrl;
+    return `${base}/ws/admin?token=${encodeURIComponent(token)}`;
+  }
+
+  private handleIncomingOrderNotification(notification: AdminOrderNotification): void {
+    this.adminNotifications.update((items) => [notification, ...items].slice(0, 10));
+    this.unreadNotifications.update((count) => count + 1);
+
+    showToast.info(
+      'New Order Received',
+      `#${notification.order_number} from ${notification.customer_name} - Rs ${Math.round(notification.total_amount)}`,
+      5000
+    );
+
+    this.showBrowserNotification(notification);
+    this.loadDashboardData();
+  }
+
+  private requestBrowserNotificationPermission(): void {
+    if (typeof window === 'undefined' || !('Notification' in window)) {
+      return;
+    }
+
+    if (Notification.permission === 'default') {
+      Notification.requestPermission().catch((error) => {
+        console.error('Notification permission request failed:', error);
+      });
+    }
+  }
+
+  private showBrowserNotification(notification: AdminOrderNotification): void {
+    if (typeof window === 'undefined' || !('Notification' in window)) {
+      return;
+    }
+
+    if (Notification.permission !== 'granted') {
+      return;
+    }
+
+    const browserNotification = new Notification('New Order Alert', {
+      body: `${notification.customer_name} placed order #${notification.order_number}`
+    });
+
+    browserNotification.onclick = () => {
+      window.focus();
+    };
   }
 }
